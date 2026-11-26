@@ -1,0 +1,179 @@
+/* Reseteo básico y tipografía */
+
+
+        body {
+            background-color: #ffffff; /* Fondo exterior blanco para contrastar */
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Contenedor que simula la pantalla del móvil, sin el marco del dispositivo */
+        .mobile-screen {
+            width: 100%;
+            max-width: 400px;
+            min-height: 100vh;
+            background-color: #F8F9FA;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 24px 20px 24px;
+            position: relative;
+        }
+
+        /* Cabecera / Logo */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            margin-top: 20px;
+        }
+
+        .logo-placeholder {
+            width: 32px;
+            height: 32px;
+            background-color: #E26D55;
+            border-radius: 8px;
+            margin-right: 12px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1A1A1A;
+        }
+
+        /* Sección de Bienvenida */
+        .welcome-section {
+            margin-bottom: 32px;
+        }
+
+        .welcome-section h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-bottom: 12px;
+        }
+
+        .welcome-section p {
+            font-size: 16px;
+            color: #4A4A4A;
+            line-height: 1.4;
+        }
+
+        /* Formulario */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #EAEAEA;
+            border-radius: 10px;
+            background-color: #FCFCFC;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .input-wrapper input::placeholder {
+            color: #999;
+        }
+
+        /* Placeholder para el ícono de visibilidad de contraseña */
+        .icon-placeholder {
+            position: absolute;
+            right: 16px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #2B7A75;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .icon-placeholder::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background-color: #2B7A75;
+            border-radius: 50%;
+        }
+
+        /* Recuperar Contraseña */
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 28px;
+            margin-top: -4px;
+        }
+
+        .forgot-password a {
+            color: #E26D55;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Botón Iniciar Sesión */
+        .login-btn {
+            background-color: #E26D55;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        /* Crear Cuenta */
+        .signup-prompt {
+            text-align: center;
+            font-size: 15px;
+            color: #4A4A4A;
+        }
+
+        .signup-prompt a {
+            color: #E26D55;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Pie de página */
+        .footer {
+            margin-top: auto; /* Empuja el footer hacia abajo */
+            border-top: 1px solid #2B7A75;
+            padding-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #2B7A75;
+        }
+
+        .footer a {
+            color: #2B7A75;
+            text-decoration: none;
+        }

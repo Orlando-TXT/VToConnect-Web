@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario</title>
+    <!-- CDN para los íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="perfil.css">
+</head>
+<body>
+    <!-- Contenedor principal que simula la pantalla del móvil -->
+    <div class="mobile-frame">
+        
+        <!-- Área scrolleable -->
+        <main class="scroll-area">
+            
+            <!-- Portada -->
+            <div class="cover-placeholder placeholder">Imagen de Portada</div>
+            
+            <div class="content-padding">
+                <!-- Foto de perfil -->
+                <div class="profile-pic-placeholder placeholder">Perfil</div>
+                
+                <!-- Información Principal -->
+                <div class="header-row">
+                    <h1 class="name">Alejandra Gómez, 28</h1>
+                    <button class="btn-edit">Editar Perfil</button>
+                </div>
+                <div class="location">
+                    <i class="fa-solid fa-location-dot"></i> Guadalajara, México
+                </div>
+                <p class="bio">
+                    Amante de la naturaleza, el yoga y de conocer gente nueva. Intentando aprender a bailar salsa este año. ¡Vamos por un café o un sprint!
+                </p>
+                
+                <!-- Intereses -->
+                <h2 class="section-title">Mis Intereses</h2>
+                <div class="tags-container">
+                    <span class="tag green"><i class="fa-solid fa-person-praying"></i> Yoga</span>
+                    <span class="tag green"><i class="fa-solid fa-person-hiking"></i> Senderismo</span>
+                    <span class="tag coral"><i class="fa-solid fa-child-reaching"></i> Baile</span>
+                    <span class="tag coral"><i class="fa-solid fa-mug-hot"></i> Café y charlas</span>
+                    <span class="tag green"><i class="fa-solid fa-camera"></i> Fotografía</span>
+                </div>
+
+                <!-- Insignias -->
+                <h2 class="section-title">Insignias de Comunidad</h2>
+                <div class="badges-container">
+                    <div class="badge">
+                        <div class="badge-icon-placeholder placeholder">Icono</div>
+                        <span class="badge-text">Anfitrión<br>Frecuente</span>
+                    </div>
+                    <div class="badge">
+                        <div class="badge-icon-placeholder placeholder">Icono</div>
+                        <span class="badge-text">Exploradora<br>Activa</span>
+                    </div>
+                    <div class="badge">
+                        <div class="badge-icon-placeholder placeholder">Icono</div>
+                        <span class="badge-text">Rompehielos</span>
+                    </div>
+                </div>
+
+                <!-- Mi Impacto / Eventos -->
+                <h2 class="section-title">Mi Impacto / Eventos</h2>
+                <div class="events-container">
+                    <div class="event-card">
+                        <div class="event-img-placeholder placeholder">Img Evento 1</div>
+                        <div class="event-info">Senderismo en la Primavera</div>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-img-placeholder placeholder">Img Evento 2</div>
+                        <div class="event-info">Clase de Salsa para Principiantes</div>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción (Configuración y Salir) -->
+                <div class="extra-actions">
+                    <button class="btn-settings"><i class="fa-solid fa-gear"></i> Configuración</button>
+                    <button class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Barra de navegación inferior -->
+        <nav class="bottom-nav">
+            <a href="menuExplorar.html" class="nav-item">
+                <i class="fa-regular fa-compass"></i>
+                <span>Explorar</span>
+            </a>
+            <a href="menuRegistro.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i>
+                <span>Mis Eventos</span>
+            </a>
+            <a href="crearEvento.html" class="nav-item">
+                <i class="fa-solid fa-circle-plus"></i>
+                <span>Crear</span>
+            </a>
+            <a href="menuChat.html" class="nav-item">
+                <i class="fa-regular fa-comment-dots"></i>
+                <span>Mensajes</span>
+            </a>
+            <!-- Perfil se marca activo -->
+            <a href="menuPerfil.html" class="nav-item active">
+                <i class="fa-regular fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </div>
+</body>
+</html>
+
+
+
+

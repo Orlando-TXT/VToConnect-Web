@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Crear Evento - VToConnect</title>
+    <!-- Usamos FontAwesome para los íconos de la interfaz (fechas, flechas, etc.) en lugar de emojis -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="crear-evento.css">
+</head>
+<body>
+
+    <div class="mobile-app-container">
+        
+        <!-- Header Fijo Superior -->
+        <header class="app-header">
+            <button class="header-btn"><i class="fa-solid fa-chevron-left"></i> Atrás</button>
+            <h1 class="header-title">Crear Evento</h1>
+            <button class="header-btn">Cancelar</button>
+        </header>
+
+        <!-- Zona Interactiva de Scroll -->
+        <main class="scrollable-content">
+            
+            <!-- Sección 1: Detalles Básicos -->
+            <div class="section-block">
+                <h2 class="section-title">Detalles Básicos</h2>
+                
+                <div class="form-group">
+                    <label class="form-label">Título del evento</label>
+                    <input type="text" class="input-field" placeholder="Ej. Senderismo al atardecer o Yoga en el parque">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Categoría</label>
+                    <div class="categories-grid">
+                        <button class="pill pill-yoga">Yoga</button>
+                        <button class="pill pill-senderismo">Senderismo</button>
+                        <button class="pill pill-baile">Baile</button>
+                        <button class="pill pill-deportes">Deportes</button>
+                        <button class="pill pill-charla">Charla</button>
+                        <button class="pill pill-otros">Otros</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 2: Cuándo y Dónde -->
+            <div class="section-block">
+                <h2 class="section-title">Cuándo y Dónde</h2>
+                
+                <div class="datetime-grid form-group">
+                    <div>
+                        <label class="form-label">Fecha</label>
+                        <button class="btn-input">
+                            <i class="fa-regular fa-calendar"></i> Seleccionar fecha
+                        </button>
+                    </div>
+                    <div>
+                        <label class="form-label">Hora</label>
+                        <button class="btn-input">
+                            <i class="fa-regular fa-clock"></i> Seleccionar hora
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Ubicación</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <input type="text" class="input-field" placeholder="Ej. Parque Metropolitano, Guadalajara">
+                    </div>
+                </div>
+                
+                <!-- Div preparado para el mapa -->
+                <div class="map-placeholder" id="gmp-map-container">
+                    <!-- Aquí incorporarás tu etiqueta <gmp-map> -->
+                </div>
+            </div>
+
+            <!-- Sección 3: Sobre el Evento -->
+            <div class="section-block">
+                <h2 class="section-title">Sobre el Evento</h2>
+                
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea class="input-field" placeholder="Cuéntanos de qué trata, qué deben llevar los asistentes y dónde nos encontraremos..."></textarea>
+                </div>
+                
+                <div class="limit-row">
+                    <span class="limit-label">Límite de asistentes</span>
+                    <div class="counter-controls">
+                        <button class="counter-btn">+</button>
+                        <span class="counter-val">15</span>
+                        <button class="counter-btn">-</button>
+                    </div>
+                </div>
+                <p class="helper-text">Mantén el grupo pequeño para facilitar la convivencia</p>
+
+                <!-- El scroll terminará mostrándo este botón integro -->
+                <button class="publish-btn">Publicar Evento</button>
+            </div>
+            
+        </main>
+
+        <!-- Barra de navegación inferior (Proporcionada en el archivo txt) -->
+        <nav class="bottom-nav">
+            <a href="menuExplorar.html" class="nav-item">
+                <i class="fa-regular fa-compass"></i>
+                <span>Explorar</span>
+            </a>
+            <a href="menuRegistro.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i>
+                <span>Mis Eventos</span>
+            </a>
+            <!-- Cambié la clase active a "Crear" para coincidir con la pantalla -->
+            <a href="crearEvento.html" class="nav-item active">
+                <i class="fa-solid fa-circle-plus"></i>
+                <span>Crear</span>
+            </a>
+            <a href="menuChat.html" class="nav-item">
+                <i class="fa-regular fa-comment-dots"></i>
+                <span>Mensajes</span>
+            </a>
+            <a href="menuPerfil.html" class="nav-item">
+                <i class="fa-regular fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
+
+    </div>
+
+</body>
+</html>
+
+

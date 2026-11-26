@@ -1,0 +1,269 @@
+:root {
+            --bg-color: #F8F5F0;
+            --primary-coral: #FF7058;
+            --primary-green: #839D87;
+            --text-dark: #222222;
+            --text-muted: #666666;
+            --white: #FFFFFF;
+            --border-color: #E5E0D8;
+        }
+
+
+        body {
+            background-color: #000; /* Fondo oscuro para simular el borde del teléfono si se ve en desktop */
+            display: flex;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 430px; /* Ancho típico de un móvil grande */
+            height: 100%;
+            background-color: var(--bg-color);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Buscador Superior --- */
+        .top-search-bar {
+            position: absolute;
+            top: 50px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .search-input-container {
+            flex: 1;
+            background-color: var(--white);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .search-input-container i {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .search-input-container input {
+            border: none;
+            outline: none;
+            padding: 12px 10px;
+            width: 100%;
+            font-size: 14px;
+            color: var(--text-dark);
+            background: transparent;
+        }
+
+        .filter-btn {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-coral);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+
+        /* --- Contenedor del Mapa --- */
+        .map-placeholder {
+            width: 100%;
+            height: 45%; /* Ocupa el 45% superior de la pantalla */
+            background-color: #E2DDD5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* --- Panel Inferior (Bottom Sheet) --- */
+        .bottom-sheet {
+            background-color: var(--bg-color);
+            border-radius: 24px 24px 0 0;
+            margin-top: -24px; /* Superposición sobre el mapa */
+            flex: 1;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+        }
+
+        .drag-handle-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 12px 0;
+        }
+
+        .drag-handle {
+            width: 40px;
+            height: 4px;
+            background-color: #D4CDC2;
+            border-radius: 2px;
+        }
+
+        .sheet-content {
+            padding: 0 0 80px 0; /* Espacio para la barra de navegación */
+            overflow-y: auto;
+        }
+
+        /* --- Categorías (Filtros) --- */
+        .categories-scroll {
+            display: flex;
+            gap: 10px;
+            padding: 5px 20px 15px 20px;
+            overflow-x: auto;
+            scrollbar-width: none; /* Firefox */
+        }
+        .categories-scroll::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+        .category-chip {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            background-color: var(--white);
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .category-chip.active {
+            background-color: var(--primary-coral);
+            color: var(--white);
+            border-color: var(--primary-coral);
+        }
+
+        /* --- Sección de Eventos --- */
+        .section-header {
+            padding: 10px 20px 15px 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .events-scroll {
+            display: flex;
+            gap: 15px;
+            padding: 0 20px 20px 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .events-scroll::-webkit-scrollbar { display: none; }
+
+        /* --- Tarjeta de Evento --- */
+        .event-card {
+            background-color: var(--white);
+            border-radius: 16px;
+            min-width: 280px;
+            width: 85%;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.02);
+            flex-shrink: 0;
+        }
+
+        .card-img-placeholder {
+            width: 100%;
+            height: 140px;
+            background-color: #D3D3D3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .card-content {
+            padding: 16px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+        }
+
+        .card-author {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .card-details-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .card-details-row i {
+            color: var(--text-muted);
+            width: 14px;
+            text-align: center;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .attendees {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar-group {
+            display: flex;
+        }
+
+        .avatar-placeholder {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #ccc;
+            border: 2px solid var(--white);
+            margin-right: -8px;
+        }
+
+        .attendees-count {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-left: 14px;
+        }
+
+        .btn-details {
+            background-color: var(--primary-green);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+        }

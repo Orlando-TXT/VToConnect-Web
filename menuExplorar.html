@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Social de Eventos</title>
+    <!-- Importando fuente similar a la de la imagen -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Iconos de FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="explorar.css">
+    <!-- Estilos específicos para el submenú de filtros -->
+    <link rel="stylesheet" href="filtros.css">
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Buscador superior superpuesto al mapa -->
+        <div class="top-search-bar">
+            <div class="search-input-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar eventos, clases...">
+            </div>
+            <!-- Agregamos el ID para abrir los filtros -->
+            <button class="filter-btn" id="openFiltersBtn">
+                <i class="fa-solid fa-sliders"></i>
+            </button>
+        </div>
+
+        <!-- Contenedor del Mapa (Div del tamaño adecuado para <gmp-map>) -->
+        <div id="map-container" class="map-placeholder">
+            <!-- Aquí irá tu etiqueta <gmp-map> -->
+            <span>[Espacio para &lt;gmp-map&gt;]</span>
+        </div>
+
+        <!-- Panel de contenido inferior original -->
+        <div class="bottom-sheet">
+            <div class="drag-handle-container">
+                <div class="drag-handle"></div>
+            </div>
+
+            <div class="sheet-content">
+                <!-- Filtros / Categorías horizontales -->
+                <div class="categories-scroll">
+                    <div class="category-chip active">Todos</div>
+                    <div class="category-chip">Yoga</div>
+                    <div class="category-chip">Baile</div>
+                    <div class="category-chip">Senderismo</div>
+                    <div class="category-chip">Tours</div>
+                </div>
+
+                <!-- Título de sección -->
+                <div class="section-header">
+                    <h2 class="section-title">Cerca de ti este fin de semana</h2>
+                </div>
+
+                <!-- Scroll horizontal de eventos -->
+                <div class="events-scroll">
+                    
+                    <!-- Tarjeta de Evento 1 -->
+                    <div class="event-card">
+                        <div class="card-img-placeholder">[Imagen Yoga]</div>
+                        <div class="card-content">
+                            <h3 class="card-title">Clase de Yoga para Principiantes</h3>
+                            <p class="card-author">Por Sofía M.</p>
+                            
+                            <div class="card-details-row">
+                                <i class="fa-regular fa-calendar"></i>
+                                <span>Sábado, 10:00 AM</span>
+                            </div>
+                            <div class="card-details-row">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>Parque Metropolitano</span>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="attendees">
+                                    <div class="avatar-group">
+                                        <div class="avatar-placeholder"></div>
+                                        <div class="avatar-placeholder"></div>
+                                        <div class="avatar-placeholder"></div>
+                                    </div>
+                                    <span class="attendees-count">+12 asistirán</span>
+                                </div>
+                                <button class="btn-details">Ver detalles</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta de Evento 2 (Para demostrar el scroll) -->
+                    <div class="event-card">
+                        <div class="card-img-placeholder">[Imagen Sprint/Running]</div>
+                        <div class="card-content">
+                            <h3 class="card-title">Sprint en grupo & Running</h3>
+                            <p class="card-author">Por Carlos D.</p>
+                            
+                            <div class="card-details-row">
+                                <i class="fa-regular fa-calendar"></i>
+                                <span>Domingo, 8:00 AM</span>
+                            </div>
+                            <div class="card-details-row">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>Bosque Los Colomos</span>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="attendees">
+                                    <div class="avatar-group">
+                                        <div class="avatar-placeholder"></div>
+                                        <div class="avatar-placeholder"></div>
+                                    </div>
+                                    <span class="attendees-count">+5 asistirán</span>
+                                </div>
+                                <button class="btn-details">Ver detalles</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Overlay oscuro y menú deslizable de FILTROS (Agregado) -->
+        <!-- Se le cambió la clase interna a 'filter-bottom-sheet' para no chocar con tu '.bottom-sheet' -->
+        <div class="bottom-sheet-overlay" id="filterOverlay">
+            <div class="filter-bottom-sheet" id="filterSheet">
+                
+                <div class="filter-sheet-header">
+                    <h2>Filtros de búsqueda</h2>
+                    <button class="close-btn" id="closeFiltersBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="filter-section">
+                    <div class="filter-section-header">
+                        <h3>Cercanía (Distancia)</h3>
+                        <button class="reset-btn" id="resetDistanceBtn">Restablecer</button>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-value-display" id="distanceDisplay">5 km</div>
+                        <input type="range" min="1" max="16" value="5" class="custom-slider" id="distanceSlider">
+                        <div class="slider-labels">
+                            <span>1 km</span>
+                            <span>15+ km</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>Número de personas</h3>
+                    <div class="pill-group" id="peopleGroup">
+                        <button class="pill-btn active" data-value="individual">Individual</button>
+                        <button class="pill-btn" data-value="2-5">2-5 personas</button>
+                        <button class="pill-btn" data-value="6-10">6-10 personas</button>
+                        <button class="pill-btn" data-value="10+">Grupos grandes (10+)</button>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>Fecha y hora</h3>
+                    <div class="pill-group" id="dateGroup">
+                        <button class="pill-btn" data-value="hoy">Hoy</button>
+                        <button class="pill-btn" data-value="fin-semana">Este fin de semana</button>
+                        <button class="pill-btn" data-value="proxima-semana">Próxima semana</button>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>Precio</h3>
+                    <div class="pill-group" id="priceGroup">
+                        <button class="pill-btn active" data-value="gratis">Gratis</button>
+                        <button class="pill-btn" data-value="bajo">$ (Bajo)</button>
+                        <button class="pill-btn" data-value="medio">$$ (Medio)</button>
+                        <button class="pill-btn" data-value="alto">$$$ (Alto)</button>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>Categoría de actividad</h3>
+                    <div class="pill-group" id="categoryGroup">
+                        <button class="pill-btn active" data-value="yoga">Yoga</button>
+                        <button class="pill-btn" data-value="baile">Baile</button>
+                        <button class="pill-btn" data-value="deportes">Deportes</button>
+                        <button class="pill-btn" data-value="aire-libre">Aire libre</button>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="apply-btn" id="applyFiltersBtn">Aplicar filtros</button>
+                    <button class="show-results-btn" id="showResultsBtn">Mostrar resultados</button>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- Barra de navegación inferior -->
+        <nav class="bottom-nav">
+            <a href="menuExplorar.html" class="nav-item active">
+                <i class="fa-regular fa-compass"></i>
+                <span>Explorar</span>
+            </a>
+            <a href="menuRegistro.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i>
+                <span>Mis Eventos</span>
+            </a>
+            <a href="crearEvento.html" class="nav-item">
+                <i class="fa-solid fa-circle-plus"></i>
+                <span>Crear</span>
+            </a>
+            <a href="menuChat.html" class="nav-item">
+                <i class="fa-regular fa-comment-dots"></i>
+                <span>Mensajes</span>
+            </a>
+            <a href="menuPerfil.html" class="nav-item">
+                <i class="fa-regular fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
+
+    </div>
+
+    <!-- Script de lógica de filtros -->
+    <script>
+        // Elementos del DOM
+        const openBtn = document.getElementById('openFiltersBtn');
+        const closeBtn = document.getElementById('closeFiltersBtn');
+        const overlay = document.getElementById('filterOverlay');
+        const sheet = document.getElementById('filterSheet');
+        const applyBtn = document.getElementById('applyFiltersBtn');
+        
+        // Elementos del Slider
+        const slider = document.getElementById('distanceSlider');
+        const distanceDisplay = document.getElementById('distanceDisplay');
+        const resetBtn = document.getElementById('resetDistanceBtn');
+        
+        // Elementos de los botones píldora
+        const allPills = document.querySelectorAll('.pill-btn');
+
+        // Lógica para abrir/cerrar el menú deslizable
+        function openSheet() {
+            overlay.classList.add('active');
+            setTimeout(() => sheet.classList.add('active'), 10);
+        }
+
+        function closeSheet() {
+            sheet.classList.remove('active');
+            setTimeout(() => overlay.classList.remove('active'), 300);
+        }
+
+        if(openBtn) openBtn.addEventListener('click', openSheet);
+        if(closeBtn) closeBtn.addEventListener('click', closeSheet);
+        if(applyBtn) applyBtn.addEventListener('click', closeSheet); 
+        if(overlay) {
+            overlay.addEventListener('click', (e) => {
+                if(e.target === overlay) closeSheet();
+            });
+        }
+
+        // Lógica del Slider de Distancia
+        function updateSliderDisplay() {
+            if(!slider) return;
+            const val = slider.value;
+            const text = val > 15 ? '15+ km' : val + ' km';
+            distanceDisplay.textContent = text;
+            
+            // Calcular posición para el texto sobre la barra
+            const percent = (val - slider.min) / (slider.max - slider.min);
+            const thumbWidth = 24; 
+            const sliderWidth = slider.offsetWidth;
+            const offset = percent * (sliderWidth - thumbWidth) + (thumbWidth / 2);
+            
+            // Actualizar variable CSS para el color de la barra (progreso)
+            slider.style.setProperty('--value', `${percent * 100}%`);
+            
+            // Posicionar el texto directamente sobre el control
+            distanceDisplay.style.left = `${offset}px`;
+        }
+
+        if(slider) {
+            slider.addEventListener('input', updateSliderDisplay);
+            window.addEventListener('resize', updateSliderDisplay);
+            setTimeout(updateSliderDisplay, 100);
+        }
+
+        // Lógica de los botones de selección (Píldoras)
+        allPills.forEach(pill => {
+            pill.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // Botón Restablecer Distancia
+        if(resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                slider.value = 5;
+                updateSliderDisplay();
+            });
+        }
+    </script>
+</body>
+</html>

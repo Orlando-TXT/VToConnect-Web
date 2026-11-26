@@ -1,0 +1,192 @@
+:root {
+            --bg-color: #FDFBF7;
+            --text-main: #2D2D2D;
+            --text-muted: #555555;
+            --primary-coral: #E07058;
+            --primary-teal: #719C87;
+        }
+
+
+        body {
+            background-color: #e0e0e0; /* Fondo exterior para visualizar el marco móvil en escritorio */
+            display: flex;
+            justify-content: center;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 400px; /* Simulación de ancho de móvil */
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Área de la Imagen Principal */
+        .hero-image-placeholder {
+            width: 100%;
+            height: 320px;
+            background-color: #c4c4c4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 45px; 
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 18px;
+            z-index: 10;
+        }
+
+        /* Contenido Inferior */
+        .content {
+            padding: 25px 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title {
+            font-size: 26px;
+            color: var(--text-main);
+            font-weight: 700;
+            line-height: 1.25;
+            margin-bottom: 25px;
+        }
+
+        /* Lista de Detalles */
+        .details-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-bottom: 35px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .detail-icon {
+            color: var(--primary-teal);
+            font-size: 20px;
+            margin-top: 2px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .detail-text {
+            color: var(--text-main);
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        .link-map {
+            color: var(--primary-teal);
+            text-decoration: underline;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .rating-star {
+            color: var(--primary-teal);
+            font-size: 13px;
+        }
+
+        /* Sección de Asistentes */
+        .attendees-section {
+            margin-bottom: 30px;
+        }
+
+        .section-subtitle {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 15px;
+        }
+
+        .attendees-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatars-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar-placeholder {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: #d9d9d9;
+            border: 2px solid var(--bg-color); /* Borde para crear el efecto de superposición */
+            margin-left: -14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #888;
+        }
+
+        .avatar-placeholder:first-child {
+            margin-left: 0;
+        }
+
+        .attendees-text {
+            margin-left: 15px;
+            font-size: 14px;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+
+        /* Botones de Acción */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: auto; 
+            padding-bottom: 20px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border-radius: 30px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-coral);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--primary-teal);
+            color: white;
+        }

@@ -1,0 +1,235 @@
+/* --- Variables Globales --- */
+        :root {
+            --bg-color: #F6F3EB;
+            --white: #FFFFFF;
+            --text-main: #2C2C2C;
+            --text-secondary: #6B6B6B;
+            --primary-coral: #FF7B5E;
+            --btn-green: #8AA487;
+            --border-color: #E8E8E8;
+            --chat-bg-received: #FFFFFF;
+        }
+
+
+        body {
+            background-color: #f0f0f0; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Contenedor simulando la pantalla del móvil */
+        .mobile-app {
+            width: 100%;
+            max-width: 400px; 
+            height: 100vh;
+            max-height: 850px;
+            background-color: var(--bg-color);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* --- Cabecera del Chat --- */
+        .chat-header {
+            background-color: var(--white);
+            padding: 50px 20px 15px 20px; 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 10;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .group-pic-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background-color: #D1D1D1; 
+        }
+
+        .group-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .group-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .group-members {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .options-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        /* --- Área de Mensajes --- */
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message-row {
+            display: flex;
+            gap: 10px;
+            max-width: 85%;
+        }
+
+        .user-pic-placeholder {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #D1D1D1;
+            flex-shrink: 0;
+            align-self: flex-end; 
+        }
+
+        .message-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sender-name {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-left: 5px;
+        }
+
+        .bubble {
+            padding: 12px 16px;
+            font-size: 15px;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .time {
+            font-size: 11px;
+            color: #9C9C9C;
+            align-self: flex-end;
+            margin-top: 2px;
+        }
+
+        .message-received {
+            align-self: flex-start;
+        }
+
+        .message-received .bubble {
+            background-color: var(--chat-bg-received);
+            color: var(--text-main);
+            border-radius: 20px 20px 20px 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .message-sent {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-sent .message-content {
+            align-items: flex-end;
+        }
+
+        .message-sent .bubble {
+            background-color: var(--btn-green);
+            color: var(--white);
+            border-radius: 20px 20px 4px 20px;
+            box-shadow: 0 2px 5px rgba(138, 164, 135, 0.2);
+        }
+
+        .message-sent .time {
+            color: var(--btn-green);
+        }
+
+        /* --- Barra de Entrada de Texto --- */
+        .chat-input-area {
+            background-color: var(--white);
+            /* Modificado: se redujo el padding inferior porque la NavBar tomará ese lugar, y se agregó margin-bottom */
+            padding: 12px 15px; 
+            margin-bottom: 76px; /* Espacio exacto para que la navbar de abajo no lo cubra */
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: #A0A0A0;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .icon-btn:hover {
+            color: var(--primary-coral);
+        }
+
+        .input-wrapper {
+            flex: 1;
+            background-color: var(--bg-color);
+            border-radius: 25px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .chat-input::placeholder {
+            color: #A0A0A0;
+        }
+
+        .send-btn {
+            background-color: var(--primary-coral);
+            color: var(--white);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 123, 94, 0.3);
+        }

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VToConnect - Iniciar Sesión</title>
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <div class="mobile-screen">
+        
+        <!-- Header / Logo -->
+        <div class="header">
+            <div class="logo-placeholder"></div>
+            <h1>VToConnect</h1>
+        </div>
+
+        <!-- Textos de Bienvenida -->
+        <div class="welcome-section">
+            <h2>Bienvenido</h2>
+            <p>Inicia sesión para ver que<br>aventuras nos deparan hoy</p>
+        </div>
+
+        <!-- Formulario -->
+        <form class="login-form" id="loginForm">
+            <div class="input-group">
+                <label for="email">Correo Electrónico</label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" placeholder="tu@email.com">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Contraseña</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" placeholder="Ingresa tu Contraseña" style="padding-right: 48px;">
+                    <!-- Placeholder de ícono generado con CSS -->
+                    <div class="icon-placeholder" id="togglePassword" style="cursor: pointer;"></div>
+                </div>
+            </div>
+
+            <div class="forgot-password">
+                <a href="#">Contraseña olvidada?</a>
+            </div>
+
+            <!-- Mensaje de error (solo aparece si fallan los datos) -->
+            <p id="error-message" style="color: #D95D39; font-size: 14px; text-align: center; margin-bottom: 10px; display: none;"></p>
+
+            <button type="button" class="login-btn" id="loginBtn">Iniciar Sesión</button>
+        </form>
+
+        <div class="signup-prompt">
+            Nuevo en VToConnect? <a href="#">Crear cuenta</a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <span>© 2026 VToConnect</span>
+            <a href="#">Privacidad</a>
+            <a href="#">Necesitas Ayuda?</a>
+        </div>
+
+    </div>
+
+    <script>
+        // Si trabajas solo en tu PC sin túnel, puedes usar 'http://localhost:3000/api'
+        const API_URL = 'https://kffv9qcs-3000.use.devtunnels.ms/api';
+
+        const loginBtn = document.getElementById('loginBtn');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const errorMsg = document.getElementById('error-message');
+        const togglePassword = document.getElementById('togglePassword');
+
+        // Extra: Permite mostrar/ocultar la contraseña al tocar el ícono del ojo
+        togglePassword.addEventListener('click', () => {
+            const esPassword = passwordInput.type === 'password';
+            passwordInput.type = esPassword ? 'text' : 'password';
+        });
+
+        async function iniciarSesion() {
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            errorMsg.style.display = 'none';
+
+            if (!email || !password) {
+                mostrarError('Por favor ingresa tu correo y contraseña.');
+                return;
+            }
+
+            try {
+                loginBtn.disabled = true;
+                loginBtn.textContent = 'Verificando...';
+
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    mostrarError(data.error || 'Correo o contraseña incorrectos.');
+                    return;
+                }
+
+                // Guarda los datos del usuario en el navegador para usarlos en Perfil y Eventos
+                localStorage.setItem('usuario', JSON.stringify(data.user));
+
+                // Cambia 'explorar.html' por el nombre exacto de tu siguiente archivo HTML
+                window.location.href = 'explorar.html';
+
+            } catch (error) {
+                mostrarError('No se pudo conectar con el servidor. Verifica que node server.js esté activo.');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Iniciar Sesión';
+            }
+        }
+
+        function mostrarError(texto) {
+            errorMsg.textContent = texto;
+            errorMsg.style.display = 'block';
+        }
+
+        // Ejecutar al hacer clic en el botón o presionar Enter
+        loginBtn.addEventListener('click', iniciarSesion);
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') iniciarSesion();
+        });
+    </script>
+
+</body>
+</html>

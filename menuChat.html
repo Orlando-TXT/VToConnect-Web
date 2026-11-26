@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat del Evento con NavBar</title>
+    <!-- Font Awesome para los iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="chat.css">
+</head>
+<body>
+
+    <div class="mobile-app">
+        <!-- Cabecera del Chat -->
+        <header class="chat-header">
+            <div class="header-left">
+                <button class="back-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="group-pic-placeholder"></div>
+                <div class="group-info">
+                    <span class="group-title">Yoga al Aire Libre</span>
+                    <span class="group-members">4 participantes</span>
+                </div>
+            </div>
+            <button class="options-btn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+        </header>
+
+        <!-- Área de Mensajes -->
+        <main class="chat-messages" id="chat-box">
+            
+            <div class="message-row message-received">
+                <div class="user-pic-placeholder"></div>
+                <div class="message-content">
+                    <span class="sender-name">Valeria M.</span>
+                    <div class="bubble">¡Hola a todos! ¿Saben si es necesario llevar nuestro propio tapete mañana?</div>
+                    <span class="time">09:15 AM</span>
+                </div>
+            </div>
+
+            <div class="message-row message-received">
+                <div class="user-pic-placeholder"></div>
+                <div class="message-content">
+                    <span class="sender-name">Carlos R.</span>
+                    <div class="bubble">Hola Valeria, sí, el instructor mencionó que cada quien debe llevar el suyo.</div>
+                    <span class="time">09:20 AM</span>
+                </div>
+            </div>
+
+            <div class="message-row message-sent">
+                <div class="message-content">
+                    <div class="bubble">Perfecto, gracias por avisar. ¡Nos vemos en el parque!</div>
+                    <span class="time">09:22 AM</span>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Barra de Entrada -->
+        <footer class="chat-input-area">
+            <button class="icon-btn"><i class="fa-solid fa-paperclip"></i></button>
+            <div class="input-wrapper">
+                <input type="text" class="chat-input" placeholder="Escribe un mensaje..." id="msg-input">
+            </div>
+            <button class="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </footer>
+
+        <!-- Barra de navegación inferior (TU HTML) -->
+        <nav class="bottom-nav">
+            <a href="menuExplorar.html" class="nav-item">
+                <i class="fa-regular fa-compass"></i>
+                <span>Explorar</span>
+            </a>
+            <a href="menuRegistro.html" class="nav-item">
+                <i class="fa-regular fa-calendar-check"></i>
+                <span>Mis Eventos</span>
+            </a>
+            <a href="crearEvento.html" class="nav-item">
+                <i class="fa-solid fa-circle-plus"></i>
+                <span>Crear</span>
+            </a>
+            <!-- La clase "active" se movió a Mensajes -->
+            <a href="menuChat.html" class="nav-item active">
+                <i class="fa-regular fa-comment-dots"></i>
+                <span>Mensajes</span>
+            </a>
+            <a href="menuPerfil.html" class="nav-item">
+                <i class="fa-regular fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Script sencillo para simular el envío de mensajes -->
+    <script>
+        function sendMessage() {
+            const inputField = document.getElementById('msg-input');
+            const chatBox = document.getElementById('chat-box');
+            const messageText = inputField.value.trim();
+
+            if (messageText !== "") {
+                const now = new Date();
+                let hours = now.getHours();
+                let minutes = now.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; 
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                const timeString = hours + ':' + minutes + ' ' + ampm;
+
+                const messageHTML = `
+                    <div class="message-row message-sent" style="animation: fadeIn 0.3s ease;">
+                        <div class="message-content">
+                            <div class="bubble">${messageText}</div>
+                            <span class="time">${timeString}</span>
+                        </div>
+                    </div>
+                `;
+
+                chatBox.insertAdjacentHTML('beforeend', messageHTML);
+                inputField.value = "";
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+
+        document.getElementById('msg-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
+
+

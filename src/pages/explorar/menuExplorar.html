@@ -18,17 +18,42 @@
 
     <div class="app-container">
         
-        <!-- Buscador superior superpuesto al mapa -->
-        <div class="top-search-bar">
-            <div class="search-input-container">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Buscar eventos, clases...">
-            </div>
-            <!-- Agregamos el ID para abrir los filtros -->
-            <button class="filter-btn" id="openFiltersBtn">
-                <i class="fa-solid fa-sliders"></i>
-            </button>
-        </div>
+<!-- Contenedor principal de la barra de búsqueda -->
+<div class="search-container" id="searchContainer">
+  <div class="search-bar">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    <input 
+      type="text" 
+      id="searchInput" 
+      class="search-input" 
+      placeholder="Buscar eventos, clases, talleres..." 
+      autocomplete="off"
+    />
+    <button type="button" id="clearSearchBtn" class="clear-btn hidden" aria-label="Limpiar búsqueda">
+      &times;
+    </button>
+  </div>
+
+  <!-- Menú desplegable dinámico -->
+  <div class="search-dropdown hidden" id="searchDropdown">
+    <div class="dropdown-section">
+      <span class="dropdown-title">Categorías populares</span>
+      <ul class="dropdown-list" id="dropdownCategories">
+        <!-- Se llena dinámicamente desde JS / Supabase -->
+      </ul>
+    </div>
+    <div class="dropdown-divider"></div>
+    <div class="dropdown-section">
+      <span class="dropdown-title">Sugerencias</span>
+      <ul class="dropdown-list" id="dropdownResults">
+        <!-- Resultados filtrados en tiempo real -->
+      </ul>
+    </div>
+  </div>
+</div>
 
         <!-- Contenedor del Mapa (Div del tamaño adecuado para <gmp-map>) -->
         <div id="map-container" class="map-placeholder">

@@ -1,198 +1,170 @@
-/* ESTILOS ESPECÍFICOS DEL SUBMENÚ DE FILTROS */
-/* Se evitan conflictos con global.css y explorar.css */
-
-.bottom-sheet-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.4);
-    z-index: 1000; /* Asegurar que cubra el bottom-nav */
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+/* =========================================
+   PANEL DE FILTROS (FILTROS EVENTOS)
+   ========================================= */
+.filters-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: flex-end; /* Se despliega tipo panel lateral o inferior en móvil */
+  align-items: flex-end;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }
 
-.bottom-sheet-overlay.active {
-    display: block;
-    opacity: 1;
+.filters-overlay.hidden {
+  display: none;
 }
 
-/* Cambiado de .bottom-sheet a .filter-bottom-sheet para evitar conflictos con explorar.html */
-.filter-bottom-sheet {
-    position: absolute;
-    bottom: -100%;
-    left: 0;
-    right: 0;
-    background-color: #FAF4EE; /* Crema suave exacto */
-    border-top-left-radius: 28px;
-    border-top-right-radius: 28px;
-    padding: 24px 24px;
-    padding-bottom: 40px; /* Área segura inferior */
-    transition: bottom 0.3s cubic-bezier(0.2, 1, 0.3, 1);
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+.filters-container {
+  width: 100%;
+  max-width: 420px;
+  height: 90vh;
+  background-color: #ffffff;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 25px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.filter-bottom-sheet.active {
-    bottom: 0;
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
-.filter-sheet-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
+.filters-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.filter-sheet-header h2 {
-    font-size: 22px;
-    font-weight: 600;
-    color: #111;
-    margin: 0;
+.filters-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
 }
 
-.close-btn {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: #F0E8DF;
-    border: none;
-    color: #555;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.close-filters-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #64748b;
+  cursor: pointer;
 }
 
-.filter-section {
-    margin-bottom: 26px;
+.filters-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
 }
 
-.filter-section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 12px;
+.filter-group {
+  margin-bottom: 20px;
 }
 
-.filter-section h3 {
-    font-size: 17px;
-    font-weight: 600;
-    color: #111;
-    margin-bottom: 12px;
-    margin-top: 0;
+.filter-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 10px;
 }
 
-.reset-btn {
-    background: transparent;
-    border: 1px solid #D1C5BC;
-    color: #6A6058;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 14px;
-    cursor: pointer;
+.filter-slider {
+  width: 100%;
+  accent-color: #2563eb;
+  cursor: pointer;
 }
 
-.slider-container {
-    position: relative;
-    padding-top: 30px;
-    margin-bottom: 8px;
+.slider-marks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 6px;
 }
 
-.slider-value-display {
-    position: absolute;
-    top: 0;
-    transform: translateX(-50%);
-    font-size: 15px;
-    font-weight: 500;
-    color: #111;
-    white-space: nowrap;
+.filter-divider {
+  border: none;
+  height: 1px;
+  background-color: #f1f5f9;
+  margin: 20px 0;
 }
 
-.custom-slider {
-    --webkit-appearance: none;
-    width: 100%;
-    height: 6px;
-    background: linear-gradient(to right, #FF7451 var(--value, 30%), #E8DBD0 var(--value, 30%));
-    border-radius: 3px;
-    outline: none;
-    margin: 10px 0;
+.filter-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.custom-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #FF7451;
-    cursor: pointer;
-    border: 3.5px solid #FAF4EE;
-    box-shadow: 0 0 0 1px #FF7451;
+.filter-chip {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.85srem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.slider-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    color: #111;
-    margin-top: 4px;
+.filter-chip.active {
+  background-color: #eff6ff;
+  border-color: #2563eb;
+  color: #2563eb;
 }
 
-.pill-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+.filter-select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  background-color: #ffffff;
+  color: #1e293b;
+  font-size: 0.95rem;
+  outline: none;
+  cursor: pointer;
 }
 
-.pill-btn {
-    background: transparent;
-    border: 1px solid #C0B4A8;
-    color: #111;
-    padding: 10px 16px;
-    border-radius: 24px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+.filters-footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #f1f5f9;
+  background-color: #ffffff;
 }
 
-.pill-btn.active {
-    background: #FEEAE3;
-    border-color: #FF7451;
-    color: #FF7451;
+.filters-footer button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
 }
 
-.action-buttons {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-top: 32px;
-    padding-top: 10px;
+.btn-secondary {
+  background-color: #f1f5f9;
+  color: #475569;
 }
 
-.apply-btn {
-    flex: 1.2;
-    background: #FF7451;
-    color: white;
-    border: none;
-    padding: 16px;
-    border-radius: 28px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(255, 116, 81, 0.3);
-}
-
-.show-results-btn {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: #8D7B6D;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    text-align: center;
+.btn-primary {
+  background-color: #2563eb;
+  color: #ffffff;
 }

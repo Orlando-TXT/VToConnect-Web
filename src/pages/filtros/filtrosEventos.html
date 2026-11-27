@@ -1,0 +1,72 @@
+<!-- Componente / Vista de Filtros de Eventos -->
+<div class="filters-overlay" id="filtersOverlay">
+  <div class="filters-container">
+    
+    <!-- Cabecera del Panel de Filtros -->
+    <div class="filters-header">
+      <h2>Filtrar Búsqueda</h2>
+      <button type="button" class="close-filters-btn" id="closeFiltersBtn" aria-label="Cerrar filtros">
+        &times;
+      </button>
+    </div>
+
+    <div class="filters-body">
+      
+      <!-- Sección: Distancia / Proximidad -->
+      <div class="filter-group">
+        <label for="distanceRange" class="filter-label">
+          Distancia máxima: <span id="distanceValue">5</span> km
+        </label>
+        <input 
+          type="range" 
+          id="distanceRange" 
+          class="filter-slider" 
+          min="1" 
+          max="20" 
+          value="5" 
+          step="1"
+        />
+        <div class="slider-marks">
+          <span>1 km</span>
+          <span>10 km</span>
+          <span>20+ km</span>
+        </div>
+      </div>
+
+      <hr class="filter-divider" />
+
+      <!-- Sección: Tipo de Actividad / Categoría -->
+      <div class="filter-group">
+        <label class="filter-label">Categorías</label>
+        <div class="filter-chips-container" id="filterCategoryChips">
+          <button type="button" class="filter-chip active" data-category="todos">Todos</button>
+          <button type="button" class="filter-chip" data-category="clases">Clases</button>
+          <button type="button" class="filter-chip" data-category="yoga">Yoga y Bienestar</button>
+          <button type="button" class="filter-chip" data-category="tech">Conferencias Tech</button>
+          <button type="button" class="filter-chip" data-category="sprint">Running / Sprint</button>
+        </div>
+      </div>
+
+      <hr class="filter-divider" />
+
+      <!-- Sección: Ordenar por -->
+      <div class="filter-group">
+        <label for="sortBySelect" class="filter-label">Ordenar eventos por</label>
+        <select id="sortBySelect" class="filter-select">
+          <option value="recientes">Más recientes</option>
+          <option value="proximos" selected>Próximos a iniciar</option>
+          <option value="cercanos">Más cerca de mi ubicación</option>
+          <option value="popularidad">Mayor asistencia</option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- Pie de página con Acciones -->
+    <div class="filters-footer">
+      <button type="button" class="btn-secondary" id="resetFiltersBtn">Limpiar</button>
+      <button type="button" class="btn-primary" id="applyFiltersBtn">Aplicar filtros</button>
+    </div>
+
+  </div>
+</div>

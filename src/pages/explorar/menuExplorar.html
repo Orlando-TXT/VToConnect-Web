@@ -3,65 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VToConnect-Web</title>
-    <!-- Importando fuente similar a la de la imagen -->
+    <title>VToConnect-Web - Explorar</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Iconos de FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../../styles/global.css">
     <link rel="stylesheet" href="../../components/navbar/navbar.css">
     <link rel="stylesheet" href="../../styles/explorar.css">
-    <!-- Estilos específicos para el submenú de filtros -->
+    
+    <!-- Estilos del panel de filtros (filtrosEventos) -->
     <link rel="stylesheet" href="../../styles/filtros.css">
 </head>
 <body>
 
-    <div class="app-container">
-        
-<!-- Contenedor principal de la barra de búsqueda -->
-<div class="search-container" id="searchContainer">
-  <div class="search-bar">
-    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="11" cy="11" r="8"></circle>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-    </svg>
-    <input 
-      type="text" 
-      id="searchInput" 
-      class="search-input" 
-      placeholder="Buscar eventos, clases, talleres..." 
-      autocomplete="off"
-    />
-    <button type="button" id="clearSearchBtn" class="clear-btn hidden" aria-label="Limpiar búsqueda">
-      &times;
-    </button>
-  </div>
+    <div class="app-container explorar-page">
 
-  <!-- Menú desplegable dinámico -->
-  <div class="search-dropdown hidden" id="searchDropdown">
-    <div class="dropdown-section">
-      <span class="dropdown-title">Categorías populares</span>
-      <ul class="dropdown-list" id="dropdownCategories">
-        <!-- Se llena dinámicamente desde JS / Supabase -->
-      </ul>
-    </div>
-    <div class="dropdown-divider"></div>
-    <div class="dropdown-section">
-      <span class="dropdown-title">Sugerencias</span>
-      <ul class="dropdown-list" id="dropdownResults">
-        <!-- Resultados filtrados en tiempo real -->
-      </ul>
-    </div>
-  </div>
-</div>
+        <!-- =========================================
+             TOOLBAR: Buscador + Botón de Filtros
+             ========================================= -->
+        <div class="explorar-toolbar">
 
-        <!-- Contenedor del Mapa (Div del tamaño adecuado para <gmp-map>) -->
+            <!-- Contenedor del Buscador y Menú Desplegable -->
+            <div class="search-container" id="searchContainer">
+                <div class="search-bar">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="search-input"
+                        placeholder="Buscar eventos, clases, talleres..."
+                        autocomplete="off"
+                    />
+                    <button type="button" id="clearSearchBtn" class="clear-btn hidden" aria-label="Limpiar búsqueda">
+                        &times;
+                    </button>
+                </div>
+
+                <!-- Menú desplegable dinámico -->
+                <div class="search-dropdown hidden" id="searchDropdown">
+                    <div class="dropdown-section">
+                        <span class="dropdown-title">Categorías populares</span>
+                        <ul class="dropdown-list" id="dropdownCategories">
+                            <!-- Se llena dinámicamente desde JS / Supabase -->
+                        </ul>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-section">
+                        <span class="dropdown-title">Sugerencias</span>
+                        <ul class="dropdown-list" id="dropdownResults">
+                            <!-- Resultados filtrados en tiempo real -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón para abrir el panel de Filtros -->
+            <button type="button" class="filter-trigger-btn" id="openFiltersBtn" aria-label="Abrir filtros">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+            </button>
+
+        </div>
+
+        <!-- =========================================
+             MAPA
+             ========================================= -->
         <div id="map-container" class="map-placeholder">
-            <!-- Aquí irá tu etiqueta <gmp-map> -->
             <span>[Espacio para &lt;gmp-map&gt;]</span>
         </div>
 
-        <!-- Panel de contenido inferior original -->
+        <!-- =========================================
+             BOTTOM SHEET ORIGINAL (eventos cerca de ti)
+             ========================================= -->
         <div class="bottom-sheet">
             <div class="drag-handle-container">
                 <div class="drag-handle"></div>
@@ -84,14 +108,14 @@
 
                 <!-- Scroll horizontal de eventos -->
                 <div class="events-scroll">
-                    
+
                     <!-- Tarjeta de Evento 1 -->
                     <div class="event-card">
                         <div class="card-img-placeholder">[Imagen Yoga]</div>
                         <div class="card-content">
                             <h3 class="card-title">Clase de Yoga para Principiantes</h3>
                             <p class="card-author">Por Sofía M.</p>
-                            
+
                             <div class="card-details-row">
                                 <i class="fa-regular fa-calendar"></i>
                                 <span>Sábado, 10:00 AM</span>
@@ -110,20 +134,18 @@
                                     </div>
                                     <span class="attendees-count">+12 asistirán</span>
                                 </div>
-                                <button class="btn-details">Ver detalles
-                                    <a href="../filtros/detalleEventos.html" class="nav-item"></a>
-                                </button>
+                                <a href="../filtros/detalleEventos.html" class="btn-details">Ver detalles</a>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tarjeta de Evento 2 (Para demostrar el scroll) -->
+                    <!-- Tarjeta de Evento 2 -->
                     <div class="event-card">
                         <div class="card-img-placeholder">[Imagen Sprint/Running]</div>
                         <div class="card-content">
-                            <h3 class="card-title">Sprint en grupo & Running</h3>
+                            <h3 class="card-title">Sprint en grupo &amp; Running</h3>
                             <p class="card-author">Por Carlos D.</p>
-                            
+
                             <div class="card-details-row">
                                 <i class="fa-regular fa-calendar"></i>
                                 <span>Domingo, 8:00 AM</span>
@@ -141,8 +163,7 @@
                                     </div>
                                     <span class="attendees-count">+5 asistirán</span>
                                 </div>
-                                <button class="btn-details">Ver detalles</button>
-                                <a href="../filtros/detalleEventos.html" class="nav-item"></a>
+                                <a href="../filtros/detalleEventos.html" class="btn-details">Ver detalles</a>
                             </div>
                         </div>
                     </div>
@@ -151,84 +172,82 @@
             </div>
         </div>
 
-        <!-- Overlay oscuro y menú deslizable de FILTROS (Agregado) -->
-        <!-- Se le cambió la clase interna a 'filter-bottom-sheet' para no chocar con tu '.bottom-sheet' -->
-        <div class="bottom-sheet-overlay" id="filterOverlay">
-            <div class="filter-bottom-sheet" id="filterSheet">
-                
-                <div class="filter-sheet-header">
-                    <h2>Filtros de búsqueda</h2>
-                    <button class="close-btn" id="closeFiltersBtn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
+        <!-- =========================================
+             PANEL DE FILTROS (integrado desde filtrosEventos.html)
+             ========================================= -->
+        <div class="filters-overlay hidden" id="filtersOverlay">
+            <div class="filters-container">
+
+                <div class="filters-header">
+                    <h2>Filtrar Búsqueda</h2>
+                    <button type="button" class="close-filters-btn" id="closeFiltersBtn" aria-label="Cerrar filtros">
+                        &times;
                     </button>
                 </div>
 
-                <div class="filter-section">
-                    <div class="filter-section-header">
-                        <h3>Cercanía (Distancia)</h3>
-                        <button class="reset-btn" id="resetDistanceBtn">Restablecer</button>
-                    </div>
-                    <div class="slider-container">
-                        <div class="slider-value-display" id="distanceDisplay">5 km</div>
-                        <input type="range" min="1" max="16" value="5" class="custom-slider" id="distanceSlider">
-                        <div class="slider-labels">
+                <div class="filters-body">
+
+                    <!-- Distancia -->
+                    <div class="filter-group">
+                        <label for="distanceRange" class="filter-label">
+                            Distancia máxima: <span id="distanceValue">5</span> km
+                        </label>
+                        <input
+                            type="range"
+                            id="distanceRange"
+                            class="filter-slider"
+                            min="1"
+                            max="20"
+                            value="5"
+                            step="1"
+                        />
+                        <div class="slider-marks">
                             <span>1 km</span>
-                            <span>15+ km</span>
+                            <span>10 km</span>
+                            <span>20+ km</span>
                         </div>
                     </div>
-                </div>
 
-                <div class="filter-section">
-                    <h3>Número de personas</h3>
-                    <div class="pill-group" id="peopleGroup">
-                        <button class="pill-btn active" data-value="individual">Individual</button>
-                        <button class="pill-btn" data-value="2-5">2-5 personas</button>
-                        <button class="pill-btn" data-value="6-10">6-10 personas</button>
-                        <button class="pill-btn" data-value="10+">Grupos grandes (10+)</button>
+                    <hr class="filter-divider" />
+
+                    <!-- Categorías -->
+                    <div class="filter-group">
+                        <label class="filter-label">Categorías</label>
+                        <div class="filter-chips-container" id="filterCategoryChips">
+                            <button type="button" class="filter-chip active" data-category="todos">Todos</button>
+                            <button type="button" class="filter-chip" data-category="clases">Clases</button>
+                            <button type="button" class="filter-chip" data-category="yoga">Yoga y Bienestar</button>
+                            <button type="button" class="filter-chip" data-category="tech">Conferencias Tech</button>
+                            <button type="button" class="filter-chip" data-category="sprint">Running / Sprint</button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="filter-section">
-                    <h3>Fecha y hora</h3>
-                    <div class="pill-group" id="dateGroup">
-                        <button class="pill-btn" data-value="hoy">Hoy</button>
-                        <button class="pill-btn" data-value="fin-semana">Este fin de semana</button>
-                        <button class="pill-btn" data-value="proxima-semana">Próxima semana</button>
+                    <hr class="filter-divider" />
+
+                    <!-- Ordenamiento -->
+                    <div class="filter-group">
+                        <label for="sortBySelect" class="filter-label">Ordenar eventos por</label>
+                        <select id="sortBySelect" class="filter-select">
+                            <option value="recientes">Más recientes</option>
+                            <option value="proximos" selected>Próximos a iniciar</option>
+                            <option value="cercanos">Más cerca de mi ubicación</option>
+                            <option value="popularidad">Mayor asistencia</option>
+                        </select>
                     </div>
+
                 </div>
 
-                <div class="filter-section">
-                    <h3>Precio</h3>
-                    <div class="pill-group" id="priceGroup">
-                        <button class="pill-btn active" data-value="gratis">Gratis</button>
-                        <button class="pill-btn" data-value="bajo">$ (Bajo)</button>
-                        <button class="pill-btn" data-value="medio">$$ (Medio)</button>
-                        <button class="pill-btn" data-value="alto">$$$ (Alto)</button>
-                    </div>
+                <div class="filters-footer">
+                    <button type="button" class="btn-secondary" id="resetFiltersBtn">Limpiar</button>
+                    <button type="button" class="btn-primary" id="applyFiltersBtn">Aplicar filtros</button>
                 </div>
 
-                <div class="filter-section">
-                    <h3>Categoría de actividad</h3>
-                    <div class="pill-group" id="categoryGroup">
-                        <button class="pill-btn active" data-value="yoga">Yoga</button>
-                        <button class="pill-btn" data-value="baile">Baile</button>
-                        <button class="pill-btn" data-value="deportes">Deportes</button>
-                        <button class="pill-btn" data-value="aire-libre">Aire libre</button>
-                    </div>
-                </div>
-
-                <div class="action-buttons">
-                    <button class="apply-btn" id="applyFiltersBtn">Aplicar filtros</button>
-                    <button class="show-results-btn" id="showResultsBtn">Mostrar resultados</button>
-                </div>
-                
             </div>
         </div>
 
-        <!-- Barra de navegación inferior -->
+        <!-- =========================================
+             BARRA DE NAVEGACIÓN INFERIOR
+             ========================================= -->
         <nav class="bottom-nav">
             <a href="../explorar/menuExplorar.html" class="nav-item active">
                 <i class="fa-regular fa-compass"></i>
@@ -254,81 +273,161 @@
 
     </div>
 
-    <!-- Script de lógica de filtros -->
+    <!-- =========================================
+         SCRIPT DE LÓGICA
+         ========================================= -->
     <script>
-        // Elementos del DOM
-        const openBtn = document.getElementById('openFiltersBtn');
-        const closeBtn = document.getElementById('closeFiltersBtn');
-        const overlay = document.getElementById('filterOverlay');
-        const sheet = document.getElementById('filterSheet');
-        const applyBtn = document.getElementById('applyFiltersBtn');
-        
-        // Elementos del Slider
-        const slider = document.getElementById('distanceSlider');
-        const distanceDisplay = document.getElementById('distanceDisplay');
-        const resetBtn = document.getElementById('resetDistanceBtn');
-        
-        // Elementos de los botones píldora
-        const allPills = document.querySelectorAll('.pill-btn');
+        /* ==============================
+           FILTROS: abrir / cerrar
+           ============================== */
+        const openFiltersBtn  = document.getElementById('openFiltersBtn');
+        const closeFiltersBtn = document.getElementById('closeFiltersBtn');
+        const filtersOverlay  = document.getElementById('filtersOverlay');
 
-        // Lógica para abrir/cerrar el menú deslizable
-        function openSheet() {
-            overlay.classList.add('active');
-            setTimeout(() => sheet.classList.add('active'), 10);
+        function openFilters() {
+            filtersOverlay.classList.remove('hidden');
+            // pequeño delay para que se dispare la transición CSS si la tienes
+            requestAnimationFrame(() => filtersOverlay.classList.add('active'));
         }
 
-        function closeSheet() {
-            sheet.classList.remove('active');
-            setTimeout(() => overlay.classList.remove('active'), 300);
+        function closeFilters() {
+            filtersOverlay.classList.remove('active');
+            setTimeout(() => filtersOverlay.classList.add('hidden'), 200);
         }
 
-        if(openBtn) openBtn.addEventListener('click', openSheet);
-        if(closeBtn) closeBtn.addEventListener('click', closeSheet);
-        if(applyBtn) applyBtn.addEventListener('click', closeSheet); 
-        if(overlay) {
-            overlay.addEventListener('click', (e) => {
-                if(e.target === overlay) closeSheet();
+        if (openFiltersBtn)  openFiltersBtn.addEventListener('click', openFilters);
+        if (closeFiltersBtn) closeFiltersBtn.addEventListener('click', closeFilters);
+
+        if (filtersOverlay) {
+            filtersOverlay.addEventListener('click', (e) => {
+                if (e.target === filtersOverlay) closeFilters();
             });
         }
 
-        // Lógica del Slider de Distancia
-        function updateSliderDisplay() {
-            if(!slider) return;
-            const val = slider.value;
-            const text = val > 15 ? '15+ km' : val + ' km';
-            distanceDisplay.textContent = text;
-            
-            // Calcular posición para el texto sobre la barra
-            const percent = (val - slider.min) / (slider.max - slider.min);
-            const thumbWidth = 24; 
-            const sliderWidth = slider.offsetWidth;
-            const offset = percent * (sliderWidth - thumbWidth) + (thumbWidth / 2);
-            
-            // Actualizar variable CSS para el color de la barra (progreso)
-            slider.style.setProperty('--value', `${percent * 100}%`);
-            
-            // Posicionar el texto directamente sobre el control
-            distanceDisplay.style.left = `${offset}px`;
+        /* ==============================
+           SLIDER DE DISTANCIA
+           ============================== */
+        const distanceRange = document.getElementById('distanceRange');
+        const distanceValue = document.getElementById('distanceValue');
+
+        if (distanceRange && distanceValue) {
+            distanceRange.addEventListener('input', () => {
+                distanceValue.textContent = distanceRange.value;
+            });
         }
 
-        if(slider) {
-            slider.addEventListener('input', updateSliderDisplay);
-            window.addEventListener('resize', updateSliderDisplay);
-            setTimeout(updateSliderDisplay, 100);
-        }
-
-        // Lógica de los botones de selección (Píldoras)
-        allPills.forEach(pill => {
-            pill.addEventListener('click', function() {
-                this.classList.toggle('active');
+        /* ==============================
+           CHIPS DE CATEGORÍA (selección única)
+           ============================== */
+        const filterChips = document.querySelectorAll('.filter-chip');
+        filterChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                filterChips.forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
             });
         });
 
-        // Botón Restablecer Distancia
-        if(resetBtn) {
-            resetBtn.addEventListener('click', () => {
-                slider.value = 5;
-                updateSliderDisplay();
+        /* ==============================
+           BOTONES DEL FOOTER
+           ============================== */
+        const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+        const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+
+        if (resetFiltersBtn) {
+            resetFiltersBtn.addEventListener('click', () => {
+                if (distanceRange) {
+                    distanceRange.value = 5;
+                    distanceValue.textContent = '5';
+                }
+                filterChips.forEach(c => c.classList.remove('active'));
+                const firstChip = document.querySelector('.filter-chip[data-category="todos"]');
+                if (firstChip) firstChip.classList.add('active');
+                const sortSelect = document.getElementById('sortBySelect');
+                if (sortSelect) sortSelect.value = 'proximos';
+            });
+        }
+
+        if (applyFiltersBtn) {
+            applyFiltersBtn.addEventListener('click', () => {
+                // Aquí conectarías con Supabase para filtrar eventos
+                closeFilters();
+            });
+        }
+
+        /* ==============================
+           BUSCADOR + DROPDOWN
+           ============================== */
+        const searchInput     = document.getElementById('searchInput');
+        const searchDropdown  = document.getElementById('searchDropdown');
+        const clearSearchBtn  = document.getElementById('clearSearchBtn');
+        const dropdownResults = document.getElementById('dropdownResults');
+
+        // Datos de ejemplo (reemplazar por Supabase)
+        const sugerencias = [
+            'Clase de Yoga para Principiantes',
+            'Sprint en grupo & Running',
+            'Taller de Baile Latino',
+            'Senderismo en La Primavera',
+            'Tour por Tlaquepaque',
+            'Conferencia Tech Guadalajara'
+        ];
+
+        function renderSugerencias(filtro = '') {
+            if (!dropdownResults) return;
+            const texto = filtro.trim().toLowerCase();
+            const resultados = texto
+                ? sugerencias.filter(s => s.toLowerCase().includes(texto))
+                : sugerencias.slice(0, 4);
+
+            dropdownResults.innerHTML = resultados.length
+                ? resultados.map(s => `<li class="dropdown-item">${s}</li>`).join('')
+                : '<li class="dropdown-item dropdown-empty">Sin resultados</li>';
+        }
+
+        function openDropdown() {
+            if (!searchDropdown) return;
+            searchDropdown.classList.remove('hidden');
+            renderSugerencias(searchInput ? searchInput.value : '');
+        }
+
+        function closeDropdown() {
+            if (searchDropdown) searchDropdown.classList.add('hidden');
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('focus', openDropdown);
+            searchInput.addEventListener('input', () => {
+                const hasValue = searchInput.value.length > 0;
+                if (clearSearchBtn) clearSearchBtn.classList.toggle('hidden', !hasValue);
+                renderSugerencias(searchInput.value);
+                openDropdown();
+            });
+        }
+
+        if (clearSearchBtn) {
+            clearSearchBtn.addEventListener('click', () => {
+                if (searchInput) {
+                    searchInput.value = '';
+                    searchInput.focus();
+                }
+                clearSearchBtn.classList.add('hidden');
+                renderSugerencias('');
+            });
+        }
+
+        // Cerrar dropdown al hacer click fuera
+        document.addEventListener('click', (e) => {
+            const container = document.getElementById('searchContainer');
+            if (container && !container.contains(e.target)) closeDropdown();
+        });
+
+        // Click en sugerencia → rellenar input
+        if (dropdownResults) {
+            dropdownResults.addEventListener('click', (e) => {
+                if (e.target.classList.contains('dropdown-item') && !e.target.classList.contains('dropdown-empty')) {
+                    if (searchInput) searchInput.value = e.target.textContent;
+                    closeDropdown();
+                }
             });
         }
     </script>

@@ -2,7 +2,159 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="wid<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Eventos</title>
+    <!-- Font Awesome para los iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="global.css">
+    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="mis-eventos.css">
+</head>
+<body>
+
+    <div class="mobile-app">
+        <!-- Cabecera -->
+        <header class="header">
+            <h1>Mis Eventos</h1>
+        </header>
+
+        <!-- Pestañas Interactivas -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab-btn active" id="btn-proximos" onclick="switchTab('proximos')">Próximos</button>
+                <button class="tab-btn" id="btn-historial" onclick="switchTab('historial')">Historial</button>
+            </div>
+        </div>
+
+        <!-- Área de Contenido -->
+        <div class="content-area">
+            
+            <!-- Vista: Próximos Eventos -->
+            <div id="view-proximos" class="view active-view">
+                
+                <!-- Tarjeta 1 -->
+                <div class="event-card">
+                    <h2 class="event-title">Clase de Yoga al Aire Libre</h2>
+                    <div class="event-detail">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span>Sábado, 10:00 AM</span>
+                    </div>
+                    <div class="event-detail">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Parque Metropolitano</span>
+                    </div>
+                    
+                    <div class="card-footer-info">
+                        <div class="attendees">
+                            <!-- Placeholders para imágenes de usuarios -->
+                            <div class="attendee-pic"></div>
+                            <div class="attendee-pic"></div>
+                            <div class="attendee-pic"></div>
+                            <div class="attendee-pic"></div>
+                        </div>
+                        <div class="chat-status">
+                            Chat activo <i class="fa-regular fa-comment-dots"></i>
+                        </div>
+                    </div>
+
+                    <button class="card-btn btn-active-chat">
+                        <div><i class="fa-solid fa-comment-dots"></i> Chat del Evento</div>
+                    </button>
+                </div>
+
+                <!-- Tarjeta 2 -->
+                <div class="event-card">
+                    <h2 class="event-title">Grupo de Sprint nocturno</h2>
+                    <div class="event-detail">
+                        <i class="fa-regular fa-clock"></i>
+                        <span>Lunes, 7:30 PM</span>
+                    </div>
+                    <div class="event-detail">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Pista de Atletismo</span>
+                    </div>
+                    
+                    <!-- Espaciador para igualar la altura de diseño -->
+                    <div style="height: 15px;"></div> 
+
+                    <button class="card-btn btn-disabled-chat">
+                        <div>Chat del Evento</div>
+                        <span>Disponible en 48h</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Vista: Historial (Mensaje de estado vacío) -->
+            <div id="view-historial" class="view">
+                <div class="empty-state">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <p>Aún no tienes eventos pasados.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Barra de navegación inferior (TU HTML) -->
+        <nav class="bottom-nav">
+            <a href="menuExplorar.html" class="nav-item">
+                <i class="fa-regular fa-compass"></i>
+                <span>Explorar</span>
+            </a>
+            <!-- Se movió la clase "active" a esta sección -->
+            <a href="menuRegistro.html" class="nav-item active">
+                <i class="fa-regular fa-calendar-check"></i>
+                <span>Mis Eventos</span>
+            </a>
+            <a href="crearEvento.html" class="nav-item">
+                <i class="fa-solid fa-circle-plus"></i>
+                <span>Crear</span>
+            </a>
+            <a href="menuChat.html" class="nav-item">
+                <i class="fa-regular fa-comment-dots"></i>
+                <span>Mensajes</span>
+            </a>
+            <a href="menuPerfil.html" class="nav-item">
+                <i class="fa-regular fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Script de Reactividad -->
+    <script>
+        function switchTab(tabName) {
+            // Obtener botones y vistas
+            const btnProximos = document.getElementById('btn-proximos');
+            const btnHistorial = document.getElementById('btn-historial');
+            const viewProximos = document.getElementById('view-proximos');
+            const viewHistorial = document.getElementById('view-historial');
+
+            // Reiniciar clases
+            btnProximos.classList.remove('active');
+            btnHistorial.classList.remove('active');
+            viewProximos.classList.remove('active-view');
+            viewHistorial.classList.remove('active-view');
+
+            // Aplicar clases según la pestaña seleccionada
+            if(tabName === 'proximos') {
+                btnProximos.classList.add('active');
+                viewProximos.classList.add('active-view');
+            } else if (tabName === 'historial') {
+                btnHistorial.classList.add('active');
+                viewHistorial.classList.add('active-view');
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+th=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
 <body>

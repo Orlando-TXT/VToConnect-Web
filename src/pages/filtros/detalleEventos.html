@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VToConnect-Web</title>
+    <title>VToConnect-Web - Detalle del Evento</title>
     <!-- FontAwesome para los íconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../../styles/global.css">
@@ -13,40 +13,39 @@
 
 <div class="mobile-container">
     <!-- Botón circular de regreso -->
-    <a href="#" class="back-button">
+    <a href="../explorar/menuExplorar.html" class="back-button" id="backBtn">
         <i class="fa-solid fa-chevron-left"></i>
     </a>
 
-    <!-- Placeholder Imagen Superior -->
-    <div class="hero-image-placeholder">
-        [Imagen Principal del Evento]
+    <!-- Imagen Superior -->
+    <div class="hero-image-placeholder" id="heroImageContainer">
+        Cargando imagen...
     </div>
 
     <div class="content">
         <!-- Título -->
-        <h1 class="title">Clase de Yoga al Aire Libre y Convivencia</h1>
+        <h1 class="title" id="eventTitle">Cargando evento...</h1>
         
         <!-- Detalles del Evento -->
         <div class="details-list">
             <div class="detail-item">
                 <i class="fa-regular fa-calendar detail-icon"></i>
-                <div class="detail-text">
-                    Sábado, 7 de Noviembre - 9:00 AM
+                <div class="detail-text" id="eventDate">
+                    ...
                 </div>
             </div>
             
             <div class="detail-item">
                 <i class="fa-solid fa-location-dot detail-icon"></i>
-                <div class="detail-text">
-                    Parque Metropolitano, Guadalajara<br>
-                    <a href="#" class="link-map">Ver en mapa</a>
+                <div class="detail-text" id="eventLocation">
+                    ...
                 </div>
             </div>
             
             <div class="detail-item">
                 <i class="fa-regular fa-user detail-icon"></i>
-                <div class="detail-text">
-                    Organizado por Sofia M. (<i class="fa-solid fa-star rating-star"></i> 4.9)
+                <div class="detail-text" id="eventOrganizer">
+                    ...
                 </div>
             </div>
         </div>
@@ -55,27 +54,166 @@
         <div class="attendees-section">
             <h2 class="section-subtitle">Quiénes asisten</h2>
             <div class="attendees-row">
-                <div class="avatars-container">
-                    <div class="avatar-placeholder">IMG</div>
-                    <div class="avatar-placeholder">IMG</div>
-                    <div class="avatar-placeholder">IMG</div>
-                    <div class="avatar-placeholder">IMG</div>
-                </div>
-                <div class="attendees-text">
-                    +24 personas<br>asistirán
+                <div class="avatars-container" id="avatarsContainer"></div>
+                <div class="attendees-text" id="attendeesCountText">
+                    0 personas<br>asistirán
                 </div>
             </div>
         </div>
 
         <!-- Botones Inferiores -->
         <div class="button-group">
-            <a href="#" class="btn btn-primary">Unirme al evento</a>
-            <a href="#" class="btn btn-secondary">Chat del Grupo (Abierto)</a>
+            <button type="button" class="btn btn-primary" id="btnJoin" style="border:none; cursor:pointer; width:100%;">
+                Unirme al evento
+            </button>
+            <a href="../chat/menuChat.html" class="btn btn-secondary" id="btnChat">
+                Chat del Grupo (Abierto)
+            </a>
         </div>
     </div>
 </div>
 
+<script src="../../supabase/api.js"></script>
+<script>
+    function formatearFechaDetalle(isoString) {
+        if (!isoString) return 'Fecha por confirmar';
+        const fecha = new Date(isoString);
+        const diaTexto = fecha.toLocaleDateString('es-MX', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long'
+        });
+        const horaTexto = fecha.toLocaleTimeString('es-MX', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+        return `${diaTexto.charAt(0).toUpperCase() + diaTexto.slice(1)} - ${horaTexto}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const params = new URLSearchParams(window.location.search);
+        const eventId = params.get('id');
+        const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
+
+        // Botón regresar inteligente
+        const backBtn = document.getElementById('backBtn');
+        backBtn.addEventListener('click', (e) => {
+            if (window.history.length > 1) {
+                e.preventDefault();
+                window.history.back();
+            }
+        });
+
+        if (!eventId) {
+            document.getElementById('eventTitle').textContent = 'Evento no especificado';
+            document.getElementById('heroImageContainer').textContent = 'Sin evento seleccionado';
+            return;
+        }
+
+        async function cargarDetalle() {
+            try {
+                const ev = await obtenerDetalleEventoCompletoAPI(eventId);
+                if (!ev) {
+                    document.getElementById('eventTitle').textContent = 'Evento no encontrado';
+                    return;
+                }
+
+                // Imagen de portada (cover_image_url)
+                const heroContainer = document.getElementById('heroImageContainer');
+                if (ev.cover_image_url) {
+                    heroContainer.innerHTML = `<img src="${ev.cover_image_url}" alt="${ev.title}" style="width:100%; height:100%; object-fit:cover;">`;
+                } else {
+                    heroContainer.textContent = ev.category || 'Evento';
+                }
+
+                // Título y fecha
+                document.getElementById('eventTitle').textContent = ev.title;
+                document.getElementById('eventDate').textContent = formatearFechaDetalle(ev.starts_at);
+
+                // Ubicación + enlace a Google Maps usando coordenadas o nombre
+                const mapsQuery = (ev.latitude && ev.longitude)
+                    ? `${ev.latitude},${ev.longitude}`
+                    : encodeURIComponent(ev.location_name);
+                document.getElementById('eventLocation').innerHTML = `
+                    ${ev.location_name}<br>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${mapsQuery}" target="_blank" rel="noopener" class="link-map">Ver en mapa</a>
+                `;
+
+                // Organizador y calificación
+                const nombreOrg = ev.users?.full_name || 'Organizador';
+                const ratingHTML = ev.organizer_rating
+                    ? ` (<i class="fa-solid fa-star rating-star"></i> ${ev.organizer_rating})`
+                    : '';
+                document.getElementById('eventOrganizer').innerHTML = `Organizado por ${nombreOrg}${ratingHTML}`;
+
+                // Asistentes (event_attendees)
+                const asistentes = Array.isArray(ev.event_attendees) ? ev.event_attendees : [];
+                const avatarsContainer = document.getElementById('avatarsContainer');
+                avatarsContainer.innerHTML = asistentes.slice(0, 4).map(a => {
+                    const avatar = a.users?.avatar_url;
+                    const nombre = a.users?.full_name || 'Asistente';
+                    return avatar
+                        ? `<img src="${avatar}" alt="${nombre}" class="avatar-placeholder" style="object-fit:cover;">`
+                        : `<div class="avatar-placeholder">${nombre.charAt(0).toUpperCase()}</div>`;
+                }).join('');
+
+                const total = asistentes.length;
+                document.getElementById('attendeesCountText').innerHTML = total === 1
+                    ? `1 persona<br>asistirá`
+                    : `${total} personas<br>asistirán`;
+
+                // Botón Chat del Grupo
+                const btnChat = document.getElementById('btnChat');
+                if (ev.is_chat_open) {
+                    btnChat.textContent = 'Chat del Grupo (Abierto)';
+                    btnChat.href = `../chat/menuChat.html?eventId=${ev.id}`;
+                } else {
+                    btnChat.textContent = 'Chat del Grupo (Cerrado)';
+                    btnChat.href = '#';
+                    btnChat.style.opacity = '0.6';
+                    btnChat.style.pointerEvents = 'none';
+                }
+
+                // Botón Unirme al evento
+                const btnJoin = document.getElementById('btnJoin');
+                const yaInscrito = usuarioActual && asistentes.some(a => Number(a.user_id) === Number(usuarioActual.id));
+                const esOrganizador = usuarioActual && Number(ev.organizer_id) === Number(usuarioActual.id);
+
+                if (esOrganizador) {
+                    btnJoin.textContent = 'Eres el organizador';
+                    btnJoin.disabled = true;
+                    btnJoin.style.opacity = '0.75';
+                } else if (yaInscrito) {
+                    btnJoin.textContent = '¡Ya estás inscrito!';
+                    btnJoin.disabled = true;
+                    btnJoin.style.opacity = '0.75';
+                } else {
+                    btnJoin.onclick = async () => {
+                        if (!usuarioActual) {
+                            window.location.href = '../login/menuLogin.html';
+                            return;
+                        }
+                        btnJoin.disabled = true;
+                        btnJoin.textContent = 'Uniéndote...';
+                        try {
+                            await unirseAEventoAPI(ev.id, usuarioActual.id);
+                            await cargarDetalle();
+                        } catch (err) {
+                            alert(err.message);
+                            btnJoin.disabled = false;
+                            btnJoin.textContent = 'Unirme al evento';
+                        }
+                    };
+                }
+            } catch (error) {
+                console.error('Error al cargar detalle del evento:', error);
+                document.getElementById('eventTitle').textContent = 'Error al cargar el evento';
+            }
+        }
+
+        await cargarDetalle();
+    });
+</script>
 </body>
 </html>
-
-

@@ -18,68 +18,40 @@
         <main class="scroll-area">
             
             <!-- Portada -->
-            <div class="cover-placeholder placeholder">Imagen de Portada</div>
+            <div class="cover-placeholder placeholder" id="coverContainer">Imagen de Portada</div>
             
             <div class="content-padding">
                 <!-- Foto de perfil -->
-                <div class="profile-pic-placeholder placeholder">Perfil</div>
+                <div class="profile-pic-placeholder placeholder" id="avatarContainer">Perfil</div>
                 
                 <!-- Información Principal -->
                 <div class="header-row">
-                    <h1 class="name">Alejandra Gómez, 28</h1>
+                    <h1 class="name" id="userName">Cargando...</h1>
                     <button class="btn-edit">Editar Perfil</button>
                 </div>
-                <div class="location">
-                    <i class="fa-solid fa-location-dot"></i> Guadalajara, México
+                <div class="location" id="userLocation">
+                    <i class="fa-solid fa-location-dot"></i> ...
                 </div>
-                <p class="bio">
-                    Amante de la naturaleza, el yoga y de conocer gente nueva. Intentando aprender a bailar salsa este año. ¡Vamos por un café o un sprint!
+                <p class="bio" id="userBio">
+                    ...
                 </p>
                 
                 <!-- Intereses -->
                 <h2 class="section-title">Mis Intereses</h2>
-                <div class="tags-container">
-                    <span class="tag green"><i class="fa-solid fa-person-praying"></i> Yoga</span>
-                    <span class="tag green"><i class="fa-solid fa-person-hiking"></i> Senderismo</span>
-                    <span class="tag coral"><i class="fa-solid fa-child-reaching"></i> Baile</span>
-                    <span class="tag coral"><i class="fa-solid fa-mug-hot"></i> Café y charlas</span>
-                    <span class="tag green"><i class="fa-solid fa-camera"></i> Fotografía</span>
-                </div>
+                <div class="tags-container" id="interestsContainer"></div>
 
                 <!-- Insignias -->
                 <h2 class="section-title">Insignias de Comunidad</h2>
-                <div class="badges-container">
-                    <div class="badge">
-                        <div class="badge-icon-placeholder placeholder">Icono</div>
-                        <span class="badge-text">Anfitrión<br>Frecuente</span>
-                    </div>
-                    <div class="badge">
-                        <div class="badge-icon-placeholder placeholder">Icono</div>
-                        <span class="badge-text">Exploradora<br>Activa</span>
-                    </div>
-                    <div class="badge">
-                        <div class="badge-icon-placeholder placeholder">Icono</div>
-                        <span class="badge-text">Rompehielos</span>
-                    </div>
-                </div>
+                <div class="badges-container" id="badgesContainer"></div>
 
                 <!-- Mi Impacto / Eventos -->
                 <h2 class="section-title">Mi Impacto / Eventos</h2>
-                <div class="events-container">
-                    <div class="event-card">
-                        <div class="event-img-placeholder placeholder">Img Evento 1</div>
-                        <div class="event-info">Senderismo en la Primavera</div>
-                    </div>
-                    <div class="event-card">
-                        <div class="event-img-placeholder placeholder">Img Evento 2</div>
-                        <div class="event-info">Clase de Salsa para Principiantes</div>
-                    </div>
-                </div>
+                <div class="events-container" id="eventsContainer"></div>
 
                 <!-- Botones de Acción (Configuración y Salir) -->
                 <div class="extra-actions">
                     <button class="btn-settings"><i class="fa-solid fa-gear"></i> Configuración</button>
-                    <button class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
+                    <button class="btn-logout" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</button>
                 </div>
             </div>
         </main>
@@ -109,9 +81,117 @@
             </a>
         </nav>
     </div>
+
+    <script src="../../supabase/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const usuarioGuardado = JSON.parse(localStorage.getItem('usuario'));
+
+            if (!usuarioGuardado) {
+                window.location.href = '../login/menuLogin.html';
+                return;
+            }
+
+            function pintarUsuario(u) {
+                document.getElementById('userName').textContent = u.age ? `${u.full_name}, ${u.age}` : u.full_name;
+                document.getElementById('userLocation').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${u.city || 'Sin ubicación'}`;
+                document.getElementById('userBio').textContent = u.bio || 'Sin biografía aún.';
+
+                // Portada (cover_url)
+                const coverDiv = document.getElementById('coverContainer');
+                if (u.cover_url) {
+                    coverDiv.innerHTML = `<img src="${u.cover_url}" alt="Portada" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
+                    coverDiv.classList.remove('placeholder');
+                }
+
+                // Foto de perfil (avatar_url)
+                const avatarDiv = document.getElementById('avatarContainer');
+                if (u.avatar_url) {
+                    avatarDiv.innerHTML = `<img src="${u.avatar_url}" alt="${u.full_name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                    avatarDiv.classList.remove('placeholder');
+                }
+            }
+
+            pintarUsuario(usuarioGuardado);
+
+            try {
+                const { usuario, intereses, insignias, eventos } = await obtenerPerfilCompletoAPI(usuarioGuardado.id);
+
+                if (usuario) {
+                    localStorage.setItem('usuario', JSON.stringify(usuario));
+                    pintarUsuario(usuario);
+                }
+
+                // Intereses (asegura que siempre use 'green' o 'coral' del CSS)
+                const interestsContainer = document.getElementById('interestsContainer');
+                if (intereses.length > 0) {
+                    interestsContainer.innerHTML = intereses.map(int => {
+                        const colorClass = int.variant === 'green' ? 'green' : 'coral';
+                        const icon = int.icon && int.icon.startsWith('fa-') ? `fa-solid ${int.icon}` : (int.icon || 'fa-solid fa-star');
+                        return `<span class="tag ${colorClass}"><i class="${icon}"></i> ${int.name}</span>`;
+                    }).join('');
+                } else {
+                    interestsContainer.innerHTML = '<span style="font-size: 14px; color: #777;">No hay intereses registrados.</span>';
+                }
+
+                // Insignias (mapea icon_key a clases de FontAwesome)
+                const mapaIconosInsignias = {
+                    host: 'fa-solid fa-crown',
+                    frequent_host: 'fa-solid fa-crown',
+                    anfitrion: 'fa-solid fa-crown',
+                    explorer: 'fa-solid fa-compass',
+                    active_explorer: 'fa-solid fa-compass',
+                    exploradora: 'fa-solid fa-compass',
+                    icebreaker: 'fa-solid fa-fire',
+                    rompehielos: 'fa-solid fa-fire'
+                };
+
+                const badgesContainer = document.getElementById('badgesContainer');
+                if (insignias.length > 0) {
+                    badgesContainer.innerHTML = insignias.map(b => {
+                        const key = (b.icon_key || '').toLowerCase();
+                        const iconClass = key.includes('fa-')
+                            ? b.icon_key
+                            : (mapaIconosInsignias[key] || 'fa-solid fa-award');
+                        return `
+                            <div class="badge">
+                                <div class="badge-icon-placeholder" style="display:flex; align-items:center; justify-content:center; font-size:24px; color:#D95D39; background:#FCECE8;">
+                                    <i class="${iconClass}"></i>
+                                </div>
+                                <span class="badge-text">${b.name}</span>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    badgesContainer.innerHTML = '<span style="font-size: 14px; color: #777;">Aún no tienes insignias.</span>';
+                }
+
+                // Eventos organizados (usa ev.cover_image_url)
+                const eventsContainer = document.getElementById('eventsContainer');
+                if (eventos.length > 0) {
+                    eventsContainer.innerHTML = eventos.map(ev => `
+                        <div class="event-card" onclick="window.location.href='../filtros/detalleEventos.html?id=${ev.id}'" style="cursor:pointer;">
+                            ${ev.cover_image_url 
+                                ? `<img src="${ev.cover_image_url}" alt="${ev.title}" style="width:100%; height:110px; object-fit:cover; border-radius:12px 12px 0 0;">`
+                                : `<div class="event-img-placeholder placeholder">Sin imagen</div>`
+                            }
+                            <div class="event-info">${ev.title}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    eventsContainer.innerHTML = '<span style="font-size: 14px; color: #777;">Aún no has creado eventos.</span>';
+                }
+
+            } catch (error) {
+                console.error('Error al cargar perfil:', error);
+            }
+
+            // Botón Cerrar Sesión
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('usuario');
+                window.location.href = '../login/menuLogin.html';
+            });
+        });
+    </script>
 </body>
 </html>
-
-
-
-

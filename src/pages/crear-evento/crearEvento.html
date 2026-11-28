@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VToConnect-Web</title>
-    <!-- Usamos FontAwesome para los íconos de la interfaz (fechas, flechas, etc.) en lugar de emojis -->
+    <title>VToConnect-Web - Crear Evento</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="../../styles/global.css">
@@ -17,9 +16,9 @@
         
         <!-- Header Fijo Superior -->
         <header class="app-header">
-            <button class="header-btn"><i class="fa-solid fa-chevron-left"></i> Atrás</button>
+            <button type="button" class="header-btn" id="btnBack"><i class="fa-solid fa-chevron-left"></i> Atrás</button>
             <h1 class="header-title">Crear Evento</h1>
-            <button class="header-btn">Cancelar</button>
+            <button type="button" class="header-btn" id="btnCancel">Cancelar</button>
         </header>
 
         <!-- Zona Interactiva de Scroll -->
@@ -31,19 +30,24 @@
                 
                 <div class="form-group">
                     <label class="form-label">Título del evento</label>
-                    <input type="text" class="input-field" placeholder="Ej. Senderismo al atardecer o Yoga en el parque">
+                    <input type="text" class="input-field" id="eventTitle" placeholder="Ej. Senderismo al atardecer o Yoga en el parque">
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Categoría</label>
-                    <div class="categories-grid">
-                        <button class="pill pill-yoga">Yoga</button>
-                        <button class="pill pill-senderismo">Senderismo</button>
-                        <button class="pill pill-baile">Baile</button>
-                        <button class="pill pill-deportes">Deportes</button>
-                        <button class="pill pill-charla">Charla</button>
-                        <button class="pill pill-otros">Otros</button>
+                    <div class="categories-grid" id="categoriesGrid">
+                        <button type="button" class="pill pill-yoga active" data-category="Yoga">Yoga</button>
+                        <button type="button" class="pill pill-senderismo" data-category="Senderismo">Senderismo</button>
+                        <button type="button" class="pill pill-baile" data-category="Baile">Baile</button>
+                        <button type="button" class="pill pill-deportes" data-category="Deportes">Deportes</button>
+                        <button type="button" class="pill pill-charla" data-category="Charla">Charla</button>
+                        <button type="button" class="pill pill-otros" data-category="Otros">Otros</button>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Imagen de portada (URL opcional)</label>
+                    <input type="url" class="input-field" id="eventCoverUrl" placeholder="https://... (si lo dejas vacío se asigna una automática)">
                 </div>
             </div>
 
@@ -54,15 +58,11 @@
                 <div class="datetime-grid form-group">
                     <div>
                         <label class="form-label">Fecha</label>
-                        <button class="btn-input">
-                            <i class="fa-regular fa-calendar"></i> Seleccionar fecha
-                        </button>
+                        <input type="date" class="btn-input" id="eventDate" style="width:100%; font-family:inherit;">
                     </div>
                     <div>
                         <label class="form-label">Hora</label>
-                        <button class="btn-input">
-                            <i class="fa-regular fa-clock"></i> Seleccionar hora
-                        </button>
+                        <input type="time" class="btn-input" id="eventTime" style="width:100%; font-family:inherit;">
                     </div>
                 </div>
 
@@ -70,7 +70,7 @@
                     <label class="form-label">Ubicación</label>
                     <div class="input-icon-wrapper">
                         <i class="fa-solid fa-location-dot"></i>
-                        <input type="text" class="input-field" placeholder="Ej. Parque Metropolitano, Guadalajara">
+                        <input type="text" class="input-field" id="eventLocation" placeholder="Ej. Parque Metropolitano, Guadalajara">
                     </div>
                 </div>
                 
@@ -86,26 +86,25 @@
                 
                 <div class="form-group">
                     <label class="form-label">Descripción</label>
-                    <textarea class="input-field" placeholder="Cuéntanos de qué trata, qué deben llevar los asistentes y dónde nos encontraremos..."></textarea>
+                    <textarea class="input-field" id="eventDescription" placeholder="Cuéntanos de qué trata, qué deben llevar los asistentes y dónde nos encontraremos..."></textarea>
                 </div>
                 
                 <div class="limit-row">
                     <span class="limit-label">Límite de asistentes</span>
                     <div class="counter-controls">
-                        <button class="counter-btn">+</button>
-                        <span class="counter-val">15</span>
-                        <button class="counter-btn">-</button>
+                        <button type="button" class="counter-btn" id="btnPlus">+</button>
+                        <span class="counter-val" id="limitValue">15</span>
+                        <button type="button" class="counter-btn" id="btnMinus">-</button>
                     </div>
                 </div>
                 <p class="helper-text">Mantén el grupo pequeño para facilitar la convivencia</p>
 
-                <!-- El scroll terminará mostrándo este botón integro -->
-                <button class="publish-btn">Publicar Evento</button>
+                <button type="button" class="publish-btn" id="btnPublish">Publicar Evento</button>
             </div>
             
         </main>
 
-        <!-- Barra de navegación inferior (Proporcionada en el archivo txt) -->
+        <!-- Barra de navegación inferior -->
         <nav class="bottom-nav">
             <a href="../../pages/explorar/menuExplorar.html" class="nav-item">
                 <i class="fa-regular fa-compass"></i>
@@ -115,8 +114,6 @@
                 <i class="fa-regular fa-calendar-check"></i>
                 <span>Mis Eventos</span>
             </a>
-
-            <!-- "Crear" se adapta para mostrarse como activo -->
             <a href="../../pages/crear-evento/crearEvento.html" class="nav-item active">
                 <i class="fa-solid fa-circle-plus"></i>
                 <span>Crear</span>
@@ -133,7 +130,116 @@
 
     </div>
 
+    <script src="../../supabase/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
+            if (!usuarioActual) {
+                window.location.href = '../login/menuLogin.html';
+                return;
+            }
+
+            // 1. Navegación botones "Atrás" y "Cancelar" hacia Explorar
+            const irAExplorar = () => {
+                window.location.href = '../explorar/menuExplorar.html';
+            };
+            document.getElementById('btnBack').addEventListener('click', irAExplorar);
+            document.getElementById('btnCancel').addEventListener('click', irAExplorar);
+
+            // 2. Selección de categoría (píldoras)
+            let categoriaSeleccionada = 'Yoga';
+            const pills = document.querySelectorAll('#categoriesGrid .pill');
+            pills.forEach(pill => {
+                pill.addEventListener('click', () => {
+                    pills.forEach(p => {
+                        p.classList.remove('active');
+                        p.style.opacity = '0.65';
+                    });
+                    pill.classList.add('active');
+                    pill.style.opacity = '1';
+                    categoriaSeleccionada = pill.dataset.category;
+                });
+            });
+            // Inicializar opacidad visual
+            pills.forEach(p => {
+                if (!p.classList.contains('active')) p.style.opacity = '0.65';
+            });
+
+            // 3. Contador de límite de asistentes
+            let limiteAsistentes = 15;
+            const limitSpan = document.getElementById('limitValue');
+            document.getElementById('btnPlus').addEventListener('click', () => {
+                if (limiteAsistentes < 100) {
+                    limiteAsistentes++;
+                    limitSpan.textContent = limiteAsistentes;
+                }
+            });
+            document.getElementById('btnMinus').addEventListener('click', () => {
+                if (limiteAsistentes > 2) {
+                    limiteAsistentes--;
+                    limitSpan.textContent = limiteAsistentes;
+                }
+            });
+
+            // Imágenes por defecto según categoría si el usuario no pega URL
+            const imagenesPorCategoria = {
+                Yoga: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=900&q=80',
+                Senderismo: 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=900&q=80',
+                Baile: 'https://images.unsplash.com/photo-1504609813442-a8924e83f76e?auto=format&fit=crop&w=900&q=80',
+                Deportes: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=900&q=80',
+                Charla: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=900&q=80',
+                Otros: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=900&q=80'
+            };
+
+            // 4. Publicar evento en Supabase
+            const btnPublish = document.getElementById('btnPublish');
+            btnPublish.addEventListener('click', async () => {
+                const title = document.getElementById('eventTitle').value.trim();
+                const dateVal = document.getElementById('eventDate').value;
+                const timeVal = document.getElementById('eventTime').value;
+                const locationName = document.getElementById('eventLocation').value.trim();
+                const customCover = document.getElementById('eventCoverUrl').value.trim();
+
+                if (!title) {
+                    alert('Por favor escribe un título para el evento.');
+                    return;
+                }
+                if (!dateVal || !timeVal) {
+                    alert('Selecciona la fecha y la hora del evento.');
+                    return;
+                }
+                if (!locationName) {
+                    alert('Escribe la ubicación del evento.');
+                    return;
+                }
+
+                // Combinar fecha y hora en formato ISO timestamptz
+                const startsAt = new Date(`${dateVal}T${timeVal}:00`).toISOString();
+
+                const nuevoEvento = {
+                    organizer_id: Number(usuarioActual.id),
+                    title: title,
+                    category: categoriaSeleccionada,
+                    cover_image_url: customCover || imagenesPorCategoria[categoriaSeleccionada] || imagenesPorCategoria.Otros,
+                    starts_at: startsAt,
+                    location_name: locationName,
+                    is_chat_open: true
+                };
+
+                btnPublish.disabled = true;
+                btnPublish.textContent = 'Publicando...';
+
+                try {
+                    await crearEventoAPI(nuevoEvento);
+                    window.location.href = '../explorar/menuExplorar.html';
+                } catch (error) {
+                    console.error('Error al crear evento:', error);
+                    alert(error.message || 'No se pudo publicar el evento.');
+                    btnPublish.disabled = false;
+                    btnPublish.textContent = 'Publicar Evento';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
-
-

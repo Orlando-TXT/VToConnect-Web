@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VToConnect-Web</title>
+    <title>VToConnect-Web - Mis Eventos</title>
     <!-- Font Awesome para los iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../../styles/global.css">
@@ -32,61 +32,12 @@
             
             <!-- Vista: Próximos Eventos -->
             <div id="view-proximos" class="view active-view">
-                
-                <!-- Tarjeta 1 -->
-                <div class="event-card">
-                    <h2 class="event-title">Clase de Yoga al Aire Libre</h2>
-                    <div class="event-detail">
-                        <i class="fa-regular fa-calendar"></i>
-                        <span>Sábado, 10:00 AM</span>
-                    </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span>Parque Metropolitano</span>
-                    </div>
-                    
-                    <div class="card-footer-info">
-                        <div class="attendees">
-                            <!-- Placeholders para imágenes de usuarios -->
-                            <div class="attendee-pic"></div>
-                            <div class="attendee-pic"></div>
-                            <div class="attendee-pic"></div>
-                            <div class="attendee-pic"></div>
-                        </div>
-                        <div class="chat-status">
-                            Chat activo <i class="fa-regular fa-comment-dots"></i>
-                        </div>
-                    </div>
-
-                    <button class="card-btn btn-active-chat">
-                        <div><i class="fa-solid fa-comment-dots"></i> Chat del Evento</div>
-                    </button>
+                <div class="empty-state">
+                    <p>Cargando tus próximos eventos...</p>
                 </div>
-
-                <!-- Tarjeta 2 -->
-                <div class="event-card">
-                    <h2 class="event-title">Grupo de Sprint nocturno</h2>
-                    <div class="event-detail">
-                        <i class="fa-regular fa-clock"></i>
-                        <span>Lunes, 7:30 PM</span>
-                    </div>
-                    <div class="event-detail">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span>Pista de Atletismo</span>
-                    </div>
-                    
-                    <!-- Espaciador para igualar la altura de diseño -->
-                    <div style="height: 15px;"></div> 
-
-                    <button class="card-btn btn-disabled-chat">
-                        <div>Chat del Evento</div>
-                        <span>Disponible en 48h</span>
-                    </button>
-                </div>
-
             </div>
 
-            <!-- Vista: Historial (Mensaje de estado vacío) -->
+            <!-- Vista: Historial -->
             <div id="view-historial" class="view">
                 <div class="empty-state">
                     <i class="fa-solid fa-folder-open"></i>
@@ -102,7 +53,6 @@
                 <i class="fa-regular fa-compass"></i>
                 <span>Explorar</span>
             </a>
-            <!-- Se movió la clase "active" a esta sección -->
             <a href="../mis-eventos/misEventos.html" class="nav-item active">
                 <i class="fa-regular fa-calendar-check"></i>
                 <span>Mis Eventos</span>
@@ -122,23 +72,20 @@
         </nav>
     </div>
 
-    <!-- Script de Reactividad -->
+    <script src="../../supabase/api.js"></script>
     <script>
         function switchTab(tabName) {
-            // Obtener botones y vistas
             const btnProximos = document.getElementById('btn-proximos');
             const btnHistorial = document.getElementById('btn-historial');
             const viewProximos = document.getElementById('view-proximos');
             const viewHistorial = document.getElementById('view-historial');
 
-            // Reiniciar clases
             btnProximos.classList.remove('active');
             btnHistorial.classList.remove('active');
             viewProximos.classList.remove('active-view');
             viewHistorial.classList.remove('active-view');
 
-            // Aplicar clases según la pestaña seleccionada
-            if(tabName === 'proximos') {
+            if (tabName === 'proximos') {
                 btnProximos.classList.add('active');
                 viewProximos.classList.add('active-view');
             } else if (tabName === 'historial') {
@@ -146,15 +93,118 @@
                 viewHistorial.classList.add('active-view');
             }
         }
+
+        function formatearFecha(isoString) {
+            if (!isoString) return 'Fecha por confirmar';
+            const fecha = new Date(isoString);
+            const opcionesDia = { weekday: 'long', day: 'numeric', month: 'short' };
+            const opcionesHora = { hour: '2-digit', minute: '2-digit', hour12: true };
+            const diaTexto = fecha.toLocaleDateString('es-MX', opcionesDia);
+            const horaTexto = fecha.toLocaleTimeString('es-MX', opcionesHora);
+            return `${diaTexto.charAt(0).toUpperCase() + diaTexto.slice(1)}, ${horaTexto}`;
+        }
+
+        function renderizarTarjetaEvento(ev, esPasado) {
+            const asistentes = Array.isArray(ev.event_attendees) ? ev.event_attendees : [];
+            const avataresHTML = asistentes.slice(0, 4).map(a => {
+                const avatar = a.users?.avatar_url;
+                return avatar
+                    ? `<img src="${avatar}" alt="${a.users?.full_name || ''}" class="attendee-pic" style="object-fit: cover;">`
+                    : `<div class="attendee-pic"></div>`;
+            }).join('');
+
+            const footerAsistentes = asistentes.length > 0
+                ? `<div class="card-footer-info">
+                        <div class="attendees">${avataresHTML}</div>
+                        <div class="chat-status">
+                            ${ev.is_chat_open ? 'Chat activo <i class="fa-regular fa-comment-dots"></i>' : 'Chat cerrado'}
+                        </div>
+                   </div>`
+                : `<div style="height: 15px;"></div>`;
+
+            let botonHTML = '';
+            if (esPasado) {
+                botonHTML = `
+                    <button class="card-btn btn-disabled-chat" onclick="window.location.href='../filtros/detalleEventos.html?id=${ev.id}'">
+                        <div>Ver Detalles</div>
+                        <span>Evento finalizado</span>
+                    </button>`;
+            } else if (ev.is_chat_open) {
+                botonHTML = `
+                    <button class="card-btn btn-active-chat" onclick="window.location.href='../chat/menuChat.html?eventId=${ev.id}'">
+                        <div><i class="fa-solid fa-comment-dots"></i> Chat del Evento</div>
+                    </button>`;
+            } else {
+                botonHTML = `
+                    <button class="card-btn btn-disabled-chat" disabled>
+                        <div>Chat del Evento</div>
+                        <span>Disponible próximamente</span>
+                    </button>`;
+            }
+
+            return `
+                <div class="event-card">
+                    <h2 class="event-title" onclick="window.location.href='../filtros/detalleEventos.html?id=${ev.id}'" style="cursor:pointer;">
+                        ${ev.title}
+                    </h2>
+                    <div class="event-detail">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span>${formatearFecha(ev.starts_at)}</span>
+                    </div>
+                    <div class="event-detail">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>${ev.location_name}</span>
+                    </div>
+                    ${footerAsistentes}
+                    ${botonHTML}
+                </div>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const usuario = JSON.parse(localStorage.getItem('usuario'));
+            if (!usuario) {
+                window.location.href = '../login/menuLogin.html';
+                return;
+            }
+
+            const viewProximos = document.getElementById('view-proximos');
+            const viewHistorial = document.getElementById('view-historial');
+
+            try {
+                const misEventos = await obtenerMisEventosAPI(usuario.id);
+                const ahora = new Date();
+
+                const proximos = misEventos.filter(ev => new Date(ev.starts_at) >= ahora);
+                const pasados = misEventos.filter(ev => new Date(ev.starts_at) < ahora);
+
+                if (proximos.length > 0) {
+                    viewProximos.innerHTML = proximos.map(ev => renderizarTarjetaEvento(ev, false)).join('');
+                } else {
+                    viewProximos.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-regular fa-calendar-xmark"></i>
+                            <p>No tienes eventos próximos.<br>¡Explora o crea uno nuevo!</p>
+                        </div>`;
+                }
+
+                if (pasados.length > 0) {
+                    viewHistorial.innerHTML = pasados.map(ev => renderizarTarjetaEvento(ev, true)).join('');
+                } else {
+                    viewHistorial.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <p>Aún no tienes eventos pasados.</p>
+                        </div>`;
+                }
+            } catch (error) {
+                console.error('Error al cargar Mis Eventos:', error);
+                viewProximos.innerHTML = `
+                    <div class="empty-state">
+                        <p>Error al cargar tus eventos. Intenta recargar la página.</p>
+                    </div>`;
+            }
+        });
     </script>
-</body>
-</html>
-
-
-th=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
 </body>
 </html>

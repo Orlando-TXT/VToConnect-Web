@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VToConnect-Web</title>
+    <title>VToConnect-Web - Explorar</title>
     <!-- Importando fuente similar a la de la imagen -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Iconos de FontAwesome -->
@@ -22,21 +22,19 @@
         <div class="top-search-bar">
             <div class="search-input-container">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Buscar eventos, clases...">
+                <input type="text" id="searchInput" placeholder="Buscar eventos, clases...">
             </div>
-            <!-- Agregamos el ID para abrir los filtros -->
             <button class="filter-btn" id="openFiltersBtn">
                 <i class="fa-solid fa-sliders"></i>
             </button>
         </div>
 
-        <!-- Contenedor del Mapa (Div del tamaño adecuado para <gmp-map>) -->
+        <!-- Contenedor del Mapa -->
         <div id="map-container" class="map-placeholder">
-            <!-- Aquí irá tu etiqueta <gmp-map> -->
             <span>[Espacio para &lt;gmp-map&gt;]</span>
         </div>
 
-        <!-- Panel de contenido inferior original -->
+        <!-- Panel de contenido inferior -->
         <div class="bottom-sheet">
             <div class="drag-handle-container">
                 <div class="drag-handle"></div>
@@ -44,12 +42,12 @@
 
             <div class="sheet-content">
                 <!-- Filtros / Categorías horizontales -->
-                <div class="categories-scroll">
-                    <div class="category-chip active">Todos</div>
-                    <div class="category-chip">Yoga</div>
-                    <div class="category-chip">Baile</div>
-                    <div class="category-chip">Senderismo</div>
-                    <div class="category-chip">Tours</div>
+                <div class="categories-scroll" id="categoriesScroll">
+                    <div class="category-chip active" data-cat="Todos">Todos</div>
+                    <div class="category-chip" data-cat="Yoga">Yoga</div>
+                    <div class="category-chip" data-cat="Baile">Baile</div>
+                    <div class="category-chip" data-cat="Senderismo">Senderismo</div>
+                    <div class="category-chip" data-cat="Tours">Tours</div>
                 </div>
 
                 <!-- Título de sección -->
@@ -58,76 +56,13 @@
                 </div>
 
                 <!-- Scroll horizontal de eventos -->
-                <div class="events-scroll">
-                    
-                    <!-- Tarjeta de Evento 1 -->
-                    <div class="event-card">
-                        <div class="card-img-placeholder">[Imagen Yoga]</div>
-                        <div class="card-content">
-                            <h3 class="card-title">Clase de Yoga para Principiantes</h3>
-                            <p class="card-author">Por Sofía M.</p>
-                            
-                            <div class="card-details-row">
-                                <i class="fa-regular fa-calendar"></i>
-                                <span>Sábado, 10:00 AM</span>
-                            </div>
-                            <div class="card-details-row">
-                                <i class="fa-solid fa-location-dot"></i>
-                                <span>Parque Metropolitano</span>
-                            </div>
-
-                            <div class="card-footer">
-                                <div class="attendees">
-                                    <div class="avatar-group">
-                                        <div class="avatar-placeholder"></div>
-                                        <div class="avatar-placeholder"></div>
-                                        <div class="avatar-placeholder"></div>
-                                    </div>
-                                    <span class="attendees-count">+12 asistirán</span>
-                                </div>
-                                <button class="btn-details">Ver detalles
-                                    <a href="../filtros/detalleEventos.html" class="nav-item"></a>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta de Evento 2 (Para demostrar el scroll) -->
-                    <div class="event-card">
-                        <div class="card-img-placeholder">[Imagen Sprint/Running]</div>
-                        <div class="card-content">
-                            <h3 class="card-title">Sprint en grupo & Running</h3>
-                            <p class="card-author">Por Carlos D.</p>
-                            
-                            <div class="card-details-row">
-                                <i class="fa-regular fa-calendar"></i>
-                                <span>Domingo, 8:00 AM</span>
-                            </div>
-                            <div class="card-details-row">
-                                <i class="fa-solid fa-location-dot"></i>
-                                <span>Bosque Los Colomos</span>
-                            </div>
-
-                            <div class="card-footer">
-                                <div class="attendees">
-                                    <div class="avatar-group">
-                                        <div class="avatar-placeholder"></div>
-                                        <div class="avatar-placeholder"></div>
-                                    </div>
-                                    <span class="attendees-count">+5 asistirán</span>
-                                </div>
-                                <button class="btn-details">Ver detalles</button>
-                                <a href="../filtros/detalleEventos.html" class="nav-item"></a>
-                            </div>
-                        </div>
-                    </div>
-
+                <div class="events-scroll" id="eventsScrollContainer">
+                    <p style="padding: 16px; color: #777;">Cargando eventos...</p>
                 </div>
             </div>
         </div>
 
-        <!-- Overlay oscuro y menú deslizable de FILTROS (Agregado) -->
-        <!-- Se le cambió la clase interna a 'filter-bottom-sheet' para no chocar con tu '.bottom-sheet' -->
+        <!-- Overlay oscuro y menú deslizable de FILTROS -->
         <div class="bottom-sheet-overlay" id="filterOverlay">
             <div class="filter-bottom-sheet" id="filterSheet">
                 
@@ -159,7 +94,7 @@
                 <div class="filter-section">
                     <h3>Número de personas</h3>
                     <div class="pill-group" id="peopleGroup">
-                        <button class="pill-btn active" data-value="individual">Individual</button>
+                        <button class="pill-btn" data-value="individual">Individual</button>
                         <button class="pill-btn" data-value="2-5">2-5 personas</button>
                         <button class="pill-btn" data-value="6-10">6-10 personas</button>
                         <button class="pill-btn" data-value="10+">Grupos grandes (10+)</button>
@@ -188,10 +123,10 @@
                 <div class="filter-section">
                     <h3>Categoría de actividad</h3>
                     <div class="pill-group" id="categoryGroup">
-                        <button class="pill-btn active" data-value="yoga">Yoga</button>
-                        <button class="pill-btn" data-value="baile">Baile</button>
-                        <button class="pill-btn" data-value="deportes">Deportes</button>
-                        <button class="pill-btn" data-value="aire-libre">Aire libre</button>
+                        <button class="pill-btn" data-value="Yoga">Yoga</button>
+                        <button class="pill-btn" data-value="Baile">Baile</button>
+                        <button class="pill-btn" data-value="Senderismo">Senderismo</button>
+                        <button class="pill-btn" data-value="Tours">Tours</button>
                     </div>
                 </div>
 
@@ -229,24 +164,26 @@
 
     </div>
 
-    <!-- Script de lógica de filtros -->
+    <script src="../../supabase/api.js"></script>
     <script>
+        let todosLosEventos = [];
+        let categoriaSeleccionada = 'Todos';
+
         // Elementos del DOM
         const openBtn = document.getElementById('openFiltersBtn');
         const closeBtn = document.getElementById('closeFiltersBtn');
         const overlay = document.getElementById('filterOverlay');
         const sheet = document.getElementById('filterSheet');
         const applyBtn = document.getElementById('applyFiltersBtn');
+        const showResultsBtn = document.getElementById('showResultsBtn');
+        const searchInput = document.getElementById('searchInput');
         
         // Elementos del Slider
         const slider = document.getElementById('distanceSlider');
         const distanceDisplay = document.getElementById('distanceDisplay');
         const resetBtn = document.getElementById('resetDistanceBtn');
-        
-        // Elementos de los botones píldora
         const allPills = document.querySelectorAll('.pill-btn');
 
-        // Lógica para abrir/cerrar el menú deslizable
         function openSheet() {
             overlay.classList.add('active');
             setTimeout(() => sheet.classList.add('active'), 10);
@@ -257,55 +194,181 @@
             setTimeout(() => overlay.classList.remove('active'), 300);
         }
 
-        if(openBtn) openBtn.addEventListener('click', openSheet);
-        if(closeBtn) closeBtn.addEventListener('click', closeSheet);
-        if(applyBtn) applyBtn.addEventListener('click', closeSheet); 
-        if(overlay) {
+        if (openBtn) openBtn.addEventListener('click', openSheet);
+        if (closeBtn) closeBtn.addEventListener('click', closeSheet);
+        if (overlay) {
             overlay.addEventListener('click', (e) => {
-                if(e.target === overlay) closeSheet();
+                if (e.target === overlay) closeSheet();
             });
         }
 
-        // Lógica del Slider de Distancia
         function updateSliderDisplay() {
-            if(!slider) return;
+            if (!slider) return;
             const val = slider.value;
             const text = val > 15 ? '15+ km' : val + ' km';
             distanceDisplay.textContent = text;
             
-            // Calcular posición para el texto sobre la barra
             const percent = (val - slider.min) / (slider.max - slider.min);
             const thumbWidth = 24; 
             const sliderWidth = slider.offsetWidth;
             const offset = percent * (sliderWidth - thumbWidth) + (thumbWidth / 2);
             
-            // Actualizar variable CSS para el color de la barra (progreso)
             slider.style.setProperty('--value', `${percent * 100}%`);
-            
-            // Posicionar el texto directamente sobre el control
             distanceDisplay.style.left = `${offset}px`;
         }
 
-        if(slider) {
+        if (slider) {
             slider.addEventListener('input', updateSliderDisplay);
             window.addEventListener('resize', updateSliderDisplay);
             setTimeout(updateSliderDisplay, 100);
         }
 
-        // Lógica de los botones de selección (Píldoras)
         allPills.forEach(pill => {
             pill.addEventListener('click', function() {
                 this.classList.toggle('active');
             });
         });
 
-        // Botón Restablecer Distancia
-        if(resetBtn) {
+        if (resetBtn) {
             resetBtn.addEventListener('click', () => {
                 slider.value = 5;
                 updateSliderDisplay();
             });
         }
+
+        function formatearFechaExplorar(isoString) {
+            if (!isoString) return 'Fecha por confirmar';
+            const fecha = new Date(isoString);
+            const diaTexto = fecha.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'short' });
+            const horaTexto = fecha.toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit', hour12: true });
+            return `${diaTexto.charAt(0).toUpperCase() + diaTexto.slice(1)}, ${horaTexto}`;
+        }
+
+        function renderizarEventos(lista) {
+            const container = document.getElementById('eventsScrollContainer');
+
+            if (!lista || lista.length === 0) {
+                container.innerHTML = `<p style="padding: 16px; color: #777;">No se encontraron eventos con esos filtros.</p>`;
+                return;
+            }
+
+            container.innerHTML = lista.map(ev => {
+                const autor = ev.users?.full_name || 'Anfitrión';
+                const asistentes = Array.isArray(ev.event_attendees) ? ev.event_attendees : [];
+                const totalAsistentes = asistentes.length;
+
+                const avataresHTML = asistentes.slice(0, 3).map(a => {
+                    const avatar = a.users?.avatar_url;
+                    return avatar
+                        ? `<img src="${avatar}" alt="${a.users?.full_name || ''}" class="avatar-placeholder" style="object-fit: cover;">`
+                        : `<div class="avatar-placeholder"></div>`;
+                }).join('');
+
+                const imagenHTML = ev.cover_image_url
+                    ? `<img src="${ev.cover_image_url}" alt="${ev.title}" class="card-img-placeholder" style="object-fit: cover; width: 100%; display: block;">`
+                    : `<div class="card-img-placeholder">${ev.category || 'Evento'}</div>`;
+
+                return `
+                    <div class="event-card">
+                        ${imagenHTML}
+                        <div class="card-content">
+                            <h3 class="card-title">${ev.title}</h3>
+                            <p class="card-author">Por ${autor}</p>
+                            
+                            <div class="card-details-row">
+                                <i class="fa-regular fa-calendar"></i>
+                                <span>${formatearFechaExplorar(ev.starts_at)}</span>
+                            </div>
+                            <div class="card-details-row">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>${ev.location_name}</span>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="attendees">
+                                    <div class="avatar-group">
+                                        ${avataresHTML || '<div class="avatar-placeholder"></div>'}
+                                    </div>
+                                    <span class="attendees-count">+${totalAsistentes} asistirán</span>
+                                </div>
+                                <a href="../filtros/detalleEventos.html?id=${ev.id}" class="btn-details" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                    Ver detalles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filtrarYMostrar() {
+            const textoBusqueda = (searchInput.value || '').trim().toLowerCase();
+
+            // Categorías activas dentro del modal de filtros
+            const categoriasModal = Array.from(document.querySelectorAll('#categoryGroup .pill-btn.active'))
+                .map(btn => btn.dataset.value.toLowerCase());
+
+            const filtrados = todosLosEventos.filter(ev => {
+                // 1. Filtro por chip superior
+                const coincideChip = categoriaSeleccionada === 'Todos' ||
+                    (ev.category && ev.category.toLowerCase() === categoriaSeleccionada.toLowerCase());
+
+                // 2. Filtro por píldoras de categoría en el modal (si hay alguna seleccionada)
+                const coincideModalCat = categoriasModal.length === 0 ||
+                    (ev.category && categoriasModal.includes(ev.category.toLowerCase()));
+
+                // 3. Filtro por texto en título, ubicación o categoría
+                const coincideTexto = !textoBusqueda ||
+                    (ev.title && ev.title.toLowerCase().includes(textoBusqueda)) ||
+                    (ev.location_name && ev.location_name.toLowerCase().includes(textoBusqueda)) ||
+                    (ev.category && ev.category.toLowerCase().includes(textoBusqueda));
+
+                return coincideChip && coincideModalCat && coincideTexto;
+            });
+
+            renderizarEventos(filtrados);
+        }
+
+        // Eventos en chips de categorías horizontales
+        document.querySelectorAll('#categoriesScroll .category-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('#categoriesScroll .category-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                categoriaSeleccionada = chip.dataset.cat;
+                filtrarYMostrar();
+            });
+        });
+
+        // Buscador en tiempo real
+        if (searchInput) {
+            searchInput.addEventListener('input', filtrarYMostrar);
+        }
+
+        // Botones del modal de filtros
+        if (applyBtn) {
+            applyBtn.addEventListener('click', () => {
+                filtrarYMostrar();
+                closeSheet();
+            });
+        }
+        if (showResultsBtn) {
+            showResultsBtn.addEventListener('click', () => {
+                filtrarYMostrar();
+                closeSheet();
+            });
+        }
+
+        // Carga inicial desde Supabase
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                todosLosEventos = await obtenerEventosExplorarAPI();
+                renderizarEventos(todosLosEventos);
+            } catch (error) {
+                console.error('Error al cargar eventos:', error);
+                document.getElementById('eventsScrollContainer').innerHTML =
+                    `<p style="padding: 16px; color: #d9534f;">Error al cargar los eventos desde Supabase.</p>`;
+            }
+        });
     </script>
 </body>
 </html>

@@ -16,6 +16,14 @@
 </head>
 
 <body>
+
+    <div class="app-container">
+        
+        <!-- Buscador superior superpuesto al mapa -->
+        <div class="top-search-bar">
+            <div class="search-input-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Buscar eventos, clases...">
     <main class="explorar-map-wrapper">
 
         <!-- MAPA -->
@@ -23,6 +31,9 @@
             <div class="map-view-container">
                 <div id="map" class="google-map"></div>
             </div>
+            <button class="filter-btn" id="openFiltersBtn">
+                <i class="fa-solid fa-sliders"></i>
+            </button>
         </div>
 
         <section class="drag-handle-container" id="dragContainer">
@@ -98,103 +109,49 @@
                     <!-- Aquí se renderizan las tarjetas de eventos desde Supabase -->
                 </div>
 
+        <!-- Panel de contenido inferior -->
+        <div class="bottom-sheet">
+            <div class="drag-handle-container">
+                <div class="drag-handle"></div>
             </div>
         </section>
     </main>
 
-    <div class="sheet-content">
-        <!-- Filtros / Categorías horizontales -->
-        <div class="categories-scroll">
-            <div class="category-chip active">Todos</div>
-            <div class="category-chip">Yoga</div>
-            <div class="category-chip">Baile</div>
-            <div class="category-chip">Senderismo</div>
-            <div class="category-chip">Tours</div>
-        </div>
+            <div class="sheet-content">
+                <!-- Filtros / Categorías horizontales -->
+                <div class="categories-scroll" id="categoriesScroll">
+                    <div class="category-chip active" data-cat="Todos">Todos</div>
+                    <div class="category-chip" data-cat="Yoga">Yoga</div>
+                    <div class="category-chip" data-cat="Baile">Baile</div>
+                    <div class="category-chip" data-cat="Senderismo">Senderismo</div>
+                    <div class="category-chip" data-cat="Tours">Tours</div>
+                </div>
 
         <!-- Título de sección -->
         <div class="section-header">
             <h2 class="section-title">Cerca de ti este fin de semana</h2>
         </div>
 
-        <!-- Scroll horizontal de eventos -->
-        <div class="events-scroll">
-
-            <!-- Tarjeta de Evento 1 -->
-            <div class="event-card">
-                <div class="card-img-placeholder">[Imagen Yoga]</div>
-                <div class="card-content">
-                    <h3 class="card-title">Clase de Yoga para Principiantes</h3>
-                    <p class="card-author">Por Sofía M.</p>
-
-                    <div class="card-details-row">
-                        <i class="fa-regular fa-calendar"></i>
-                        <span>Sábado, 10:00 AM</span>
-                    </div>
-                    <div class="card-details-row">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span>Parque Metropolitano</span>
-                    </div>
-
-                    <div class="card-footer">
-                        <div class="attendees">
-                            <div class="avatar-group">
-                                <div class="avatar-placeholder"></div>
-                                <div class="avatar-placeholder"></div>
-                                <div class="avatar-placeholder"></div>
-                            </div>
-                            <span class="attendees-count">+12 asistirán</span>
-                        </div>
-                        <a href="../filtros/detalleEventos.html" class="btn-details">Ver detalles</a>
-                    </div>
+                <!-- Scroll horizontal de eventos -->
+                <div class="events-scroll" id="eventsScrollContainer">
+                    <p style="padding: 16px; color: #777;">Cargando eventos...</p>
                 </div>
             </div>
-
-            <!-- Tarjeta de Evento 2 -->
-            <div class="event-card">
-                <div class="card-img-placeholder">[Imagen Sprint/Running]</div>
-                <div class="card-content">
-                    <h3 class="card-title">Sprint en grupo &amp; Running</h3>
-                    <p class="card-author">Por Carlos D.</p>
-
-                    <div class="card-details-row">
-                        <i class="fa-regular fa-calendar"></i>
-                        <span>Domingo, 8:00 AM</span>
-                    </div>
-                    <div class="card-details-row">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span>Bosque Los Colomos</span>
-                    </div>
-
-                    <div class="card-footer">
-                        <div class="attendees">
-                            <div class="avatar-group">
-                                <div class="avatar-placeholder"></div>
-                                <div class="avatar-placeholder"></div>
-                            </div>
-                            <span class="attendees-count">+5 asistirán</span>
-                        </div>
-                        <a href="../filtros/detalleEventos.html" class="btn-details">Ver detalles</a>
-                    </div>
-                </div>
-            </div>
-
         </div>
-    </div>
 
-
-    <!-- =========================================
-        PANEL DE FILTROS (integrado desde filtrosEventos.html)
-        ========================================= -->
-    <div class="filters-overlay hidden" id="filtersOverlay">
-        <div class="filters-container">
-
-            <div class="filters-header">
-                <h2>Filtrar Búsqueda</h2>
-                <button type="button" class="close-filters-btn" id="closeFiltersBtn" aria-label="Cerrar filtros">
-                    &times;
-                </button>
-            </div>
+        <!-- Overlay oscuro y menú deslizable de FILTROS -->
+        <div class="bottom-sheet-overlay" id="filterOverlay">
+            <div class="filter-bottom-sheet" id="filterSheet">
+                
+                <div class="filter-sheet-header">
+                    <h2>Filtros de búsqueda</h2>
+                    <button class="close-btn" id="closeFiltersBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
 
             <div class="filters-body">
 
@@ -211,17 +168,13 @@
                     </div>
                 </div>
 
-                <hr class="filter-divider" />
-
-                <!-- Categorías -->
-                <div class="filter-group">
-                    <label class="filter-label">Categorías</label>
-                    <div class="filter-chips-container" id="filterCategoryChips">
-                        <button type="button" class="filter-chip active" data-category="todos">Todos</button>
-                        <button type="button" class="filter-chip" data-category="clases">Clases</button>
-                        <button type="button" class="filter-chip" data-category="yoga">Yoga y Bienestar</button>
-                        <button type="button" class="filter-chip" data-category="tech">Conferencias Tech</button>
-                        <button type="button" class="filter-chip" data-category="sprint">Running / Sprint</button>
+                <div class="filter-section">
+                    <h3>Número de personas</h3>
+                    <div class="pill-group" id="peopleGroup">
+                        <button class="pill-btn active" data-value="individual">Individual</button>
+                        <button class="pill-btn" data-value="2-5">2-5 personas</button>
+                        <button class="pill-btn" data-value="6-10">6-10 personas</button>
+                        <button class="pill-btn" data-value="10+">Grupos grandes (10+)</button>
                     </div>
                 </div>
 
@@ -238,7 +191,15 @@
                     </select>
                 </div>
 
-            </div>
+                <div class="filter-section">
+                    <h3>Categoría de actividad</h3>
+                    <div class="pill-group" id="categoryGroup">
+                        <button class="pill-btn" data-value="Yoga">Yoga</button>
+                        <button class="pill-btn" data-value="Baile">Baile</button>
+                        <button class="pill-btn" data-value="Senderismo">Senderismo</button>
+                        <button class="pill-btn" data-value="Tours">Tours</button>
+                    </div>
+                </div>
 
             <div class="filters-footer">
                 <button type="button" class="btn-secondary" id="resetFiltersBtn">Limpiar</button>
@@ -277,167 +238,210 @@
         </nav>
     </div>
 
-
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdwDkB8H2bl8Ozm0b7sqDS2kpvsWH5aQs&libraries=places"
-        async defer></script>
-
-    <!-- =========================================
-    SCRIPT DE LÓGICA
-    ========================================= -->
+    <script src="../../supabase/api.js"></script>
     <script>
-        /* ==============================
-           FILTROS: abrir / cerrar
-           ============================== */
-        const openFiltersBtn = document.getElementById('openFiltersBtn');
-        const closeFiltersBtn = document.getElementById('closeFiltersBtn');
-        const filtersOverlay = document.getElementById('filtersOverlay');
+        // Elementos del DOM
+        const openBtn = document.getElementById('openFiltersBtn');
+        const closeBtn = document.getElementById('closeFiltersBtn');
+        const overlay = document.getElementById('filterOverlay');
+        const sheet = document.getElementById('filterSheet');
+        const applyBtn = document.getElementById('applyFiltersBtn');
+        
+        // Elementos del Slider
+        const slider = document.getElementById('distanceSlider');
+        const distanceDisplay = document.getElementById('distanceDisplay');
+        const resetBtn = document.getElementById('resetDistanceBtn');
+        
+        // Elementos de los botones píldora
+        const allPills = document.querySelectorAll('.pill-btn');
 
-        function openFilters() {
-            filtersOverlay.classList.remove('hidden');
-            // pequeño delay para que se dispare la transición CSS si la tienes
-            requestAnimationFrame(() => filtersOverlay.classList.add('active'));
+        // Lógica para abrir/cerrar el menú deslizable
+        function openSheet() {
+            overlay.classList.add('active');
+            setTimeout(() => sheet.classList.add('active'), 10);
         }
 
-        function closeFilters() {
-            filtersOverlay.classList.remove('active');
-            setTimeout(() => filtersOverlay.classList.add('hidden'), 200);
+        function closeSheet() {
+            sheet.classList.remove('active');
+            setTimeout(() => overlay.classList.remove('active'), 300);
         }
 
-        if (openFiltersBtn) openFiltersBtn.addEventListener('click', openFilters);
-        if (closeFiltersBtn) closeFiltersBtn.addEventListener('click', closeFilters);
-
-        if (filtersOverlay) {
-            filtersOverlay.addEventListener('click', (e) => {
-                if (e.target === filtersOverlay) closeFilters();
+        if(openBtn) openBtn.addEventListener('click', openSheet);
+        if(closeBtn) closeBtn.addEventListener('click', closeSheet);
+        if(applyBtn) applyBtn.addEventListener('click', closeSheet); 
+        if(overlay) {
+            overlay.addEventListener('click', (e) => {
+                if(e.target === overlay) closeSheet();
             });
         }
 
-        /* ==============================
-           SLIDER DE DISTANCIA
-           ============================== */
-        const distanceRange = document.getElementById('distanceRange');
-        const distanceValue = document.getElementById('distanceValue');
+        function updateSliderDisplay() {
+            if (!slider) return;
+            const val = slider.value;
+            const text = val > 15 ? '15+ km' : val + ' km';
+            distanceDisplay.textContent = text;
+            
+            const percent = (val - slider.min) / (slider.max - slider.min);
+            const thumbWidth = 24; 
+            const sliderWidth = slider.offsetWidth;
+            const offset = percent * (sliderWidth - thumbWidth) + (thumbWidth / 2);
+            
+            slider.style.setProperty('--value', `${percent * 100}%`);
+            distanceDisplay.style.left = `${offset}px`;
+        }
 
-        if (distanceRange && distanceValue) {
-            distanceRange.addEventListener('input', () => {
-                distanceValue.textContent = distanceRange.value;
+        if (slider) {
+            slider.addEventListener('input', updateSliderDisplay);
+            window.addEventListener('resize', updateSliderDisplay);
+            setTimeout(updateSliderDisplay, 100);
+        }
+
+        allPills.forEach(pill => {
+            pill.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                slider.value = 5;
+                updateSliderDisplay();
             });
         }
 
-        /* ==============================
-           CHIPS DE CATEGORÍA (selección única)
-           ============================== */
-        const filterChips = document.querySelectorAll('.filter-chip');
-        filterChips.forEach(chip => {
+        function formatearFechaExplorar(isoString) {
+            if (!isoString) return 'Fecha por confirmar';
+            const fecha = new Date(isoString);
+            const diaTexto = fecha.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'short' });
+            const horaTexto = fecha.toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit', hour12: true });
+            return `${diaTexto.charAt(0).toUpperCase() + diaTexto.slice(1)}, ${horaTexto}`;
+        }
+
+        function renderizarEventos(lista) {
+            const container = document.getElementById('eventsScrollContainer');
+
+            if (!lista || lista.length === 0) {
+                container.innerHTML = `<p style="padding: 16px; color: #777;">No se encontraron eventos con esos filtros.</p>`;
+                return;
+            }
+
+            container.innerHTML = lista.map(ev => {
+                const autor = ev.users?.full_name || 'Anfitrión';
+                const asistentes = Array.isArray(ev.event_attendees) ? ev.event_attendees : [];
+                const totalAsistentes = asistentes.length;
+
+                const avataresHTML = asistentes.slice(0, 3).map(a => {
+                    const avatar = a.users?.avatar_url;
+                    return avatar
+                        ? `<img src="${avatar}" alt="${a.users?.full_name || ''}" class="avatar-placeholder" style="object-fit: cover;">`
+                        : `<div class="avatar-placeholder"></div>`;
+                }).join('');
+
+                const imagenHTML = ev.cover_image_url
+                    ? `<img src="${ev.cover_image_url}" alt="${ev.title}" class="card-img-placeholder" style="object-fit: cover; width: 100%; display: block;">`
+                    : `<div class="card-img-placeholder">${ev.category || 'Evento'}</div>`;
+
+                return `
+                    <div class="event-card">
+                        ${imagenHTML}
+                        <div class="card-content">
+                            <h3 class="card-title">${ev.title}</h3>
+                            <p class="card-author">Por ${autor}</p>
+                            
+                            <div class="card-details-row">
+                                <i class="fa-regular fa-calendar"></i>
+                                <span>${formatearFechaExplorar(ev.starts_at)}</span>
+                            </div>
+                            <div class="card-details-row">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>${ev.location_name}</span>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="attendees">
+                                    <div class="avatar-group">
+                                        ${avataresHTML || '<div class="avatar-placeholder"></div>'}
+                                    </div>
+                                    <span class="attendees-count">+${totalAsistentes} asistirán</span>
+                                </div>
+                                <a href="../filtros/detalleEventos.html?id=${ev.id}" class="btn-details" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                    Ver detalles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filtrarYMostrar() {
+            const textoBusqueda = (searchInput.value || '').trim().toLowerCase();
+
+            // Categorías activas dentro del modal de filtros
+            const categoriasModal = Array.from(document.querySelectorAll('#categoryGroup .pill-btn.active'))
+                .map(btn => btn.dataset.value.toLowerCase());
+
+            const filtrados = todosLosEventos.filter(ev => {
+                // 1. Filtro por chip superior
+                const coincideChip = categoriaSeleccionada === 'Todos' ||
+                    (ev.category && ev.category.toLowerCase() === categoriaSeleccionada.toLowerCase());
+
+                // 2. Filtro por píldoras de categoría en el modal (si hay alguna seleccionada)
+                const coincideModalCat = categoriasModal.length === 0 ||
+                    (ev.category && categoriasModal.includes(ev.category.toLowerCase()));
+
+                // 3. Filtro por texto en título, ubicación o categoría
+                const coincideTexto = !textoBusqueda ||
+                    (ev.title && ev.title.toLowerCase().includes(textoBusqueda)) ||
+                    (ev.location_name && ev.location_name.toLowerCase().includes(textoBusqueda)) ||
+                    (ev.category && ev.category.toLowerCase().includes(textoBusqueda));
+
+                return coincideChip && coincideModalCat && coincideTexto;
+            });
+
+            renderizarEventos(filtrados);
+        }
+
+        // Eventos en chips de categorías horizontales
+        document.querySelectorAll('#categoriesScroll .category-chip').forEach(chip => {
             chip.addEventListener('click', () => {
-                filterChips.forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('#categoriesScroll .category-chip').forEach(c => c.classList.remove('active'));
                 chip.classList.add('active');
+                categoriaSeleccionada = chip.dataset.cat;
+                filtrarYMostrar();
             });
         });
 
-        /* ==============================
-           BOTONES DEL FOOTER
-           ============================== */
-        const resetFiltersBtn = document.getElementById('resetFiltersBtn');
-        const applyFiltersBtn = document.getElementById('applyFiltersBtn');
-
-        if (resetFiltersBtn) {
-            resetFiltersBtn.addEventListener('click', () => {
-                if (distanceRange) {
-                    distanceRange.value = 5;
-                    distanceValue.textContent = '5';
-                }
-                filterChips.forEach(c => c.classList.remove('active'));
-                const firstChip = document.querySelector('.filter-chip[data-category="todos"]');
-                if (firstChip) firstChip.classList.add('active');
-                const sortSelect = document.getElementById('sortBySelect');
-                if (sortSelect) sortSelect.value = 'proximos';
-            });
-        }
-
-        if (applyFiltersBtn) {
-            applyFiltersBtn.addEventListener('click', () => {
-                // Aquí conectarías con Supabase para filtrar eventos
-                closeFilters();
-            });
-        }
-
-        /* ==============================
-           BUSCADOR + DROPDOWN
-           ============================== */
-        const searchInput = document.getElementById('searchInput');
-        const searchDropdown = document.getElementById('searchDropdown');
-        const clearSearchBtn = document.getElementById('clearSearchBtn');
-        const dropdownResults = document.getElementById('dropdownResults');
-
-        // Datos de ejemplo (reemplazar por Supabase)
-        const sugerencias = [
-            'Clase de Yoga para Principiantes',
-            'Sprint en grupo & Running',
-            'Taller de Baile Latino',
-            'Senderismo en La Primavera',
-            'Tour por Tlaquepaque',
-            'Conferencia Tech Guadalajara'
-        ];
-
-        function renderSugerencias(filtro = '') {
-            if (!dropdownResults) return;
-            const texto = filtro.trim().toLowerCase();
-            const resultados = texto
-                ? sugerencias.filter(s => s.toLowerCase().includes(texto))
-                : sugerencias.slice(0, 4);
-
-            dropdownResults.innerHTML = resultados.length
-                ? resultados.map(s => `<li class="dropdown-item">${s}</li>`).join('')
-                : '<li class="dropdown-item dropdown-empty">Sin resultados</li>';
-        }
-
-        function openDropdown() {
-            if (!searchDropdown) return;
-            searchDropdown.classList.remove('hidden');
-            renderSugerencias(searchInput ? searchInput.value : '');
-        }
-
-        function closeDropdown() {
-            if (searchDropdown) searchDropdown.classList.add('hidden');
-        }
-
+        // Buscador en tiempo real
         if (searchInput) {
-            searchInput.addEventListener('focus', openDropdown);
-            searchInput.addEventListener('input', () => {
-                const hasValue = searchInput.value.length > 0;
-                if (clearSearchBtn) clearSearchBtn.classList.toggle('hidden', !hasValue);
-                renderSugerencias(searchInput.value);
-                openDropdown();
+            searchInput.addEventListener('input', filtrarYMostrar);
+        }
+
+        // Botones del modal de filtros
+        if (applyBtn) {
+            applyBtn.addEventListener('click', () => {
+                filtrarYMostrar();
+                closeSheet();
+            });
+        }
+        if (showResultsBtn) {
+            showResultsBtn.addEventListener('click', () => {
+                filtrarYMostrar();
+                closeSheet();
             });
         }
 
-        if (clearSearchBtn) {
-            clearSearchBtn.addEventListener('click', () => {
-                if (searchInput) {
-                    searchInput.value = '';
-                    searchInput.focus();
-                }
-                clearSearchBtn.classList.add('hidden');
-                renderSugerencias('');
-            });
-        }
-
-        // Cerrar dropdown al hacer click fuera
-        document.addEventListener('click', (e) => {
-            const container = document.getElementById('searchContainer');
-            if (container && !container.contains(e.target)) closeDropdown();
+        // Carga inicial desde Supabase
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                todosLosEventos = await obtenerEventosExplorarAPI();
+                renderizarEventos(todosLosEventos);
+            } catch (error) {
+                console.error('Error al cargar eventos:', error);
+                document.getElementById('eventsScrollContainer').innerHTML =
+                    `<p style="padding: 16px; color: #d9534f;">Error al cargar los eventos desde Supabase.</p>`;
+            }
         });
-
-        // Click en sugerencia → rellenar input
-        if (dropdownResults) {
-            dropdownResults.addEventListener('click', (e) => {
-                if (e.target.classList.contains('dropdown-item') && !e.target.classList.contains('dropdown-empty')) {
-                    if (searchInput) searchInput.value = e.target.textContent;
-                    closeDropdown();
-                }
-            });
-        }
     </script>
 </body>
 

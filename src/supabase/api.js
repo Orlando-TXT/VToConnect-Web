@@ -295,3 +295,52 @@ async function enviarMensajeChatAPI(eventId, senderId, content) {
     const data = await res.json();
     return data[0] || data;
 }
+
+// 12. Crear cuenta (registra un nuevo usuario en la tabla users)
+async function registrarUsuarioAPI(fullName, email, password) {
+    // Verificar si el correo ya existe
+    const resCheck = await fetch(
+        `${SUPABASE_URL}/rest/v1/users?email=eq.${encodeURIComponent(email)}&select=id`,
+        { headers: HEADERS_SUPABASE }
+    );
+    const existentes = resCheck.ok ? await resCheck.json() : [];
+    if (existentes.length > 0) {
+        throw new Error('Este correo ya está registrado. Inicia sesión.');
+    }
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/users`, {
+        method: 'POST',
+        headers: HEADERS_SUPABASE,
+        body: JSON.stringify({
+            full_name: fullName,
+            email: email,
+            password: password,
+            bio: 'Nuevo miembro en VToConnect'
+        })
+    });
+
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || 'No se pudo crear la cuenta.');
+    }
+
+    const creado = await res.json();
+    return creado[0] || creado;
+}
+
+// 13. Actualizar perfil de usuario
+async function actualizarPerfilAPI(userId, datosActualizados) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/users?id=eq.${userId}`, {
+        method: 'PATCH',
+        headers: HEADERS_SUPABASE,
+        body: JSON.stringify(datosActualizados)
+    });
+
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || 'No se pudo actualizar el perfil.');
+    }
+
+    const actualizado = await res.json();
+    return actualizado[0] || actualizado;
+}

@@ -9,6 +9,87 @@
     <link rel="stylesheet" href="../../styles/global.css">
     <link rel="stylesheet" href="../../components/navbar/navbar.css">
     <link rel="stylesheet" href="../../styles/perfil.css">
+    <style>
+        /* Estilos del modal de Editar Perfil */
+        .edit-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 16px;
+        }
+        .edit-modal-card {
+            background: #fff;
+            width: 100%;
+            max-width: 390px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+        .edit-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .edit-modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #222;
+        }
+        .edit-close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+        .edit-field {
+            margin-bottom: 12px;
+        }
+        .edit-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 4px;
+        }
+        .edit-field input,
+        .edit-field textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        .edit-field textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+        .edit-save-btn {
+            width: 100%;
+            padding: 12px;
+            background: #D95D39;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+        .edit-save-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
     <!-- Contenedor principal que simula la pantalla del móvil -->
@@ -27,7 +108,7 @@
                 <!-- Información Principal -->
                 <div class="header-row">
                     <h1 class="name" id="userName">Cargando...</h1>
-                    <button class="btn-edit">Editar Perfil</button>
+                    <button class="btn-edit" id="editProfileBtn">Editar Perfil</button>
                 </div>
                 <div class="location" id="userLocation">
                     <i class="fa-solid fa-location-dot"></i> ...
@@ -82,12 +163,50 @@
         </nav>
     </div>
 
+    <!-- Modal para Editar Perfil -->
+    <div class="edit-modal-overlay" id="editModalOverlay">
+        <div class="edit-modal-card">
+            <div class="edit-modal-header">
+                <h3>Editar Perfil</h3>
+                <button type="button" class="edit-close-btn" id="closeEditModal">&times;</button>
+            </div>
+            <form id="editProfileForm">
+                <div class="edit-field">
+                    <label for="editFullName">Nombre completo</label>
+                    <input type="text" id="editFullName" required>
+                </div>
+                <div class="edit-field">
+                    <label for="editAge">Edad</label>
+                    <input type="number" id="editAge" min="15" max="100" placeholder="Ej. 24">
+                </div>
+                <div class="edit-field">
+                    <label for="editCity">Ciudad / Ubicación</label>
+                    <input type="text" id="editCity" placeholder="Ej. Guadalajara, Jalisco">
+                </div>
+                <div class="edit-field">
+                    <label for="editBio">Biografía</label>
+                    <textarea id="editBio" placeholder="Cuéntanos un poco sobre ti..."></textarea>
+                </div>
+                <div class="edit-field">
+                    <label for="editAvatarUrl">URL de Foto de Perfil</label>
+                    <input type="url" id="editAvatarUrl" placeholder="https://...">
+                </div>
+                <div class="edit-field">
+                    <label for="editCoverUrl">URL de Imagen de Portada</label>
+                    <input type="url" id="editCoverUrl" placeholder="https://...">
+                </div>
+                <p id="editErrorMsg" style="color: #D95D39; font-size: 13px; display: none; margin-bottom: 8px;"></p>
+                <button type="submit" class="edit-save-btn" id="saveProfileBtn">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
     <script src="../../supabase/api.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const usuarioGuardado = JSON.parse(localStorage.getItem('usuario'));
+            let usuarioActual = JSON.parse(localStorage.getItem('usuario'));
 
-            if (!usuarioGuardado) {
+            if (!usuarioActual) {
                 window.location.href = '../login/menuLogin.html';
                 return;
             }
@@ -102,6 +221,9 @@
                 if (u.cover_url) {
                     coverDiv.innerHTML = `<img src="${u.cover_url}" alt="Portada" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`;
                     coverDiv.classList.remove('placeholder');
+                } else {
+                    coverDiv.textContent = 'Imagen de Portada';
+                    coverDiv.classList.add('placeholder');
                 }
 
                 // Foto de perfil (avatar_url)
@@ -109,20 +231,24 @@
                 if (u.avatar_url) {
                     avatarDiv.innerHTML = `<img src="${u.avatar_url}" alt="${u.full_name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
                     avatarDiv.classList.remove('placeholder');
+                } else {
+                    avatarDiv.textContent = 'Perfil';
+                    avatarDiv.classList.add('placeholder');
                 }
             }
 
-            pintarUsuario(usuarioGuardado);
+            pintarUsuario(usuarioActual);
 
             try {
-                const { usuario, intereses, insignias, eventos } = await obtenerPerfilCompletoAPI(usuarioGuardado.id);
+                const { usuario, intereses, insignias, eventos } = await obtenerPerfilCompletoAPI(usuarioActual.id);
 
                 if (usuario) {
+                    usuarioActual = usuario;
                     localStorage.setItem('usuario', JSON.stringify(usuario));
                     pintarUsuario(usuario);
                 }
 
-                // Intereses (asegura que siempre use 'green' o 'coral' del CSS)
+                // Intereses
                 const interestsContainer = document.getElementById('interestsContainer');
                 if (intereses.length > 0) {
                     interestsContainer.innerHTML = intereses.map(int => {
@@ -134,7 +260,7 @@
                     interestsContainer.innerHTML = '<span style="font-size: 14px; color: #777;">No hay intereses registrados.</span>';
                 }
 
-                // Insignias (mapea icon_key a clases de FontAwesome)
+                // Insignias
                 const mapaIconosInsignias = {
                     host: 'fa-solid fa-crown',
                     frequent_host: 'fa-solid fa-crown',
@@ -166,7 +292,7 @@
                     badgesContainer.innerHTML = '<span style="font-size: 14px; color: #777;">Aún no tienes insignias.</span>';
                 }
 
-                // Eventos organizados (usa ev.cover_image_url)
+                // Eventos organizados
                 const eventsContainer = document.getElementById('eventsContainer');
                 if (eventos.length > 0) {
                     eventsContainer.innerHTML = eventos.map(ev => `
@@ -185,6 +311,80 @@
             } catch (error) {
                 console.error('Error al cargar perfil:', error);
             }
+
+            // Lógica del Modal de Editar Perfil
+            const editModalOverlay = document.getElementById('editModalOverlay');
+            const editProfileBtn = document.getElementById('editProfileBtn');
+            const closeEditModal = document.getElementById('closeEditModal');
+            const editProfileForm = document.getElementById('editProfileForm');
+            const saveProfileBtn = document.getElementById('saveProfileBtn');
+            const editErrorMsg = document.getElementById('editErrorMsg');
+
+            editProfileBtn.addEventListener('click', () => {
+                document.getElementById('editFullName').value = usuarioActual.full_name || '';
+                document.getElementById('editAge').value = usuarioActual.age || '';
+                document.getElementById('editCity').value = usuarioActual.city || '';
+                document.getElementById('editBio').value = usuarioActual.bio || '';
+                document.getElementById('editAvatarUrl').value = usuarioActual.avatar_url || '';
+                document.getElementById('editCoverUrl').value = usuarioActual.cover_url || '';
+                editErrorMsg.style.display = 'none';
+                editModalOverlay.style.display = 'flex';
+            });
+
+            closeEditModal.addEventListener('click', () => {
+                editModalOverlay.style.display = 'none';
+            });
+
+            editModalOverlay.addEventListener('click', (e) => {
+                if (e.target === editModalOverlay) {
+                    editModalOverlay.style.display = 'none';
+                }
+            });
+
+            editProfileForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                editErrorMsg.style.display = 'none';
+
+                const nombre = document.getElementById('editFullName').value.trim();
+                const edadVal = document.getElementById('editAge').value;
+                const ciudad = document.getElementById('editCity').value.trim();
+                const bio = document.getElementById('editBio').value.trim();
+                const avatarUrl = document.getElementById('editAvatarUrl').value.trim();
+                const coverUrl = document.getElementById('editCoverUrl').value.trim();
+
+                if (!nombre) {
+                    editErrorMsg.textContent = 'El nombre completo es obligatorio.';
+                    editErrorMsg.style.display = 'block';
+                    return;
+                }
+
+                const payload = {
+                    full_name: nombre,
+                    age: edadVal ? Number(edadVal) : null,
+                    city: ciudad || null,
+                    bio: bio || null,
+                    avatar_url: avatarUrl || null,
+                    cover_url: coverUrl || null
+                };
+
+                try {
+                    saveProfileBtn.disabled = true;
+                    saveProfileBtn.textContent = 'Guardando...';
+
+                    const actualizado = await actualizarPerfilAPI(usuarioActual.id, payload);
+                    usuarioActual = { ...usuarioActual, ...actualizado };
+                    localStorage.setItem('usuario', JSON.stringify(usuarioActual));
+                    pintarUsuario(usuarioActual);
+
+                    editModalOverlay.style.display = 'none';
+                } catch (err) {
+                    editErrorMsg.textContent = err.message || 'Error al guardar los cambios.';
+                    editErrorMsg.style.display = 'block';
+                } finally {
+                    saveProfileBtn.disabled = false;
+                    saveProfileBtn.textContent = 'Guardar Cambios';
+                }
+            });
 
             // Botón Cerrar Sesión
             document.getElementById('logoutBtn').addEventListener('click', () => {

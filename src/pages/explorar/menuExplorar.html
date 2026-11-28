@@ -3,22 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VToConnect-Web - Explorar</title>
-    <!-- Importando fuente similar a la de la imagen -->
+    <title>VToConnect-Web</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Iconos de FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="../../styles/global.css">
     <link rel="stylesheet" href="../../components/navbar/navbar.css">
     <link rel="stylesheet" href="../../styles/explorar.css">
-    <!-- Estilos específicos para el submenú de filtros -->
     <link rel="stylesheet" href="../../styles/filtros.css">
+    <style>
+        #map-container {
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .top-search-bar {
+            z-index: 1000;
+        }
+        .bottom-sheet {
+            z-index: 1000;
+        }
+        .bottom-sheet-overlay {
+            z-index: 2000;
+        }
+        .bottom-nav {
+            z-index: 1500;
+        }
+        .leaflet-popup-content-wrapper {
+            border-radius: 14px !important;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14) !important;
+            padding: 4px;
+        }
+        .leaflet-popup-tip {
+            background: #ffffff !important;
+        }
+    </style>
 </head>
 <body>
 
     <div class="app-container">
         
-        <!-- Buscador superior superpuesto al mapa -->
         <div class="top-search-bar">
             <div class="search-input-container">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -29,40 +53,33 @@
             </button>
         </div>
 
-        <!-- Contenedor del Mapa -->
-        <div id="map-container" class="map-placeholder">
-            <span>[Espacio para &lt;gmp-map&gt;]</span>
-        </div>
+        <div id="map-container" class="map-placeholder"></div>
 
-        <!-- Panel de contenido inferior -->
         <div class="bottom-sheet">
             <div class="drag-handle-container">
                 <div class="drag-handle"></div>
             </div>
 
             <div class="sheet-content">
-                <!-- Filtros / Categorías horizontales -->
                 <div class="categories-scroll" id="categoriesScroll">
-                    <div class="category-chip active" data-cat="Todos">Todos</div>
-                    <div class="category-chip" data-cat="Yoga">Yoga</div>
-                    <div class="category-chip" data-cat="Baile">Baile</div>
-                    <div class="category-chip" data-cat="Senderismo">Senderismo</div>
-                    <div class="category-chip" data-cat="Tours">Tours</div>
+                    <div class="category-chip active" data-cat="todos">Todos</div>
+                    <div class="category-chip" data-cat="yoga">Yoga</div>
+                    <div class="category-chip" data-cat="baile">Baile</div>
+                    <div class="category-chip" data-cat="senderismo">Senderismo</div>
+                    <div class="category-chip" data-cat="tours">Tours</div>
+                    <div class="category-chip" data-cat="deportes">Deportes</div>
                 </div>
 
-                <!-- Título de sección -->
                 <div class="section-header">
                     <h2 class="section-title">Cerca de ti este fin de semana</h2>
                 </div>
 
-                <!-- Scroll horizontal de eventos -->
                 <div class="events-scroll" id="eventsScrollContainer">
                     <p style="padding: 16px; color: #777;">Cargando eventos...</p>
                 </div>
             </div>
         </div>
 
-        <!-- Overlay oscuro y menú deslizable de FILTROS -->
         <div class="bottom-sheet-overlay" id="filterOverlay">
             <div class="filter-bottom-sheet" id="filterSheet">
                 
@@ -94,7 +111,7 @@
                 <div class="filter-section">
                     <h3>Número de personas</h3>
                     <div class="pill-group" id="peopleGroup">
-                        <button class="pill-btn" data-value="individual">Individual</button>
+                        <button class="pill-btn active" data-value="individual">Individual</button>
                         <button class="pill-btn" data-value="2-5">2-5 personas</button>
                         <button class="pill-btn" data-value="6-10">6-10 personas</button>
                         <button class="pill-btn" data-value="10+">Grupos grandes (10+)</button>
@@ -123,10 +140,10 @@
                 <div class="filter-section">
                     <h3>Categoría de actividad</h3>
                     <div class="pill-group" id="categoryGroup">
-                        <button class="pill-btn" data-value="Yoga">Yoga</button>
-                        <button class="pill-btn" data-value="Baile">Baile</button>
-                        <button class="pill-btn" data-value="Senderismo">Senderismo</button>
-                        <button class="pill-btn" data-value="Tours">Tours</button>
+                        <button class="pill-btn" data-value="yoga">Yoga</button>
+                        <button class="pill-btn" data-value="baile">Baile</button>
+                        <button class="pill-btn" data-value="deportes">Deportes</button>
+                        <button class="pill-btn" data-value="senderismo">Senderismo</button>
                     </div>
                 </div>
 
@@ -138,7 +155,6 @@
             </div>
         </div>
 
-        <!-- Barra de navegación inferior -->
         <nav class="bottom-nav">
             <a href="../explorar/menuExplorar.html" class="nav-item active">
                 <i class="fa-regular fa-compass"></i>
@@ -164,12 +180,89 @@
 
     </div>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="../../supabase/api.js"></script>
-    <script>
-        let todosLosEventos = [];
-        let categoriaSeleccionada = 'Todos';
 
-        // Elementos del DOM
+    <script>
+        const mapa = L.map('map-container', { zoomControl: false }).setView([20.6950, -103.3550], 11);
+
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; Esri &mdash; OpenStreetMap'
+        }).addTo(mapa);
+
+        const capaPines = L.layerGroup().addTo(mapa);
+
+        const iconoEventoVTo = L.divIcon({
+            className: 'custom-vto-pin',
+            html: `
+                <div style="
+                    background: #D95D39;
+                    width: 34px;
+                    height: 34px;
+                    border-radius: 50% 50% 50% 0;
+                    transform: rotate(-45deg);
+                    border: 3px solid #FFFFFF;
+                    box-shadow: 0 4px 12px rgba(217, 93, 57, 0.45);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">
+                    <i class="fa-solid fa-location-dot" style="color: #fff; font-size: 14px; transform: rotate(45deg);"></i>
+                </div>
+            `,
+            iconSize: [34, 34],
+            iconAnchor: [17, 34],
+            popupAnchor: [0, -34]
+        });
+
+        const coordsRespaldoGDL = [
+            [20.6716, -103.4408],
+            [20.6975, -103.3936],
+            [20.6736, -103.3688],
+            [20.6767, -103.3475],
+            [20.7204, -103.3918]
+        ];
+
+        function obtenerCoordenadasEvento(ev, index) {
+            if (ev.latitude && ev.longitude) {
+                return [Number(ev.latitude), Number(ev.longitude)];
+            }
+            const texto = `${ev.title || ''} ${ev.location_name || ''}`.toLowerCase();
+            if (texto.includes('barranca') || texto.includes('huentit') || texto.includes('tetl')) {
+                return [20.7356, -103.3075];
+            }
+            if (texto.includes('metropolitano')) {
+                return [20.6716, -103.4408];
+            }
+            if (texto.includes('colomos')) {
+                return [20.6975, -103.3936];
+            }
+            return coordsRespaldoGDL[index % coordsRespaldoGDL.length];
+        }
+
+        function actualizarPinesMapa(eventos) {
+            capaPines.clearLayers();
+            const bounds = [];
+
+            eventos.forEach((ev, index) => {
+                const [lat, lng] = obtenerCoordenadasEvento(ev, index);
+                bounds.push([lat, lng]);
+
+                const marker = L.marker([lat, lng], { icon: iconoEventoVTo }).addTo(capaPines);
+                marker.bindPopup(`
+                    <div style="font-family: Inter, sans-serif; min-width: 140px;">
+                        <strong style="color: #222; font-size: 13px;">${ev.title}</strong><br>
+                        <span style="color: #666; font-size: 11px;">${ev.location_name || 'Guadalajara'}</span><br>
+                        <a href="../filtros/detalleEventos.html?id=${ev.id}" style="display:inline-block; margin-top:6px; color:#D95D39; font-weight:600; font-size:12px; text-decoration:none;">Ver evento →</a>
+                    </div>
+                `);
+            });
+
+            if (bounds.length > 0) {
+                mapa.fitBounds(bounds, { padding: [45, 45], maxZoom: 13 });
+            }
+        }
+
         const openBtn = document.getElementById('openFiltersBtn');
         const closeBtn = document.getElementById('closeFiltersBtn');
         const overlay = document.getElementById('filterOverlay');
@@ -177,8 +270,6 @@
         const applyBtn = document.getElementById('applyFiltersBtn');
         const showResultsBtn = document.getElementById('showResultsBtn');
         const searchInput = document.getElementById('searchInput');
-        
-        // Elementos del Slider
         const slider = document.getElementById('distanceSlider');
         const distanceDisplay = document.getElementById('distanceDisplay');
         const resetBtn = document.getElementById('resetDistanceBtn');
@@ -205,14 +296,11 @@
         function updateSliderDisplay() {
             if (!slider) return;
             const val = slider.value;
-            const text = val > 15 ? '15+ km' : val + ' km';
-            distanceDisplay.textContent = text;
-            
+            distanceDisplay.textContent = val > 15 ? '15+ km' : val + ' km';
             const percent = (val - slider.min) / (slider.max - slider.min);
-            const thumbWidth = 24; 
+            const thumbWidth = 24;
             const sliderWidth = slider.offsetWidth;
             const offset = percent * (sliderWidth - thumbWidth) + (thumbWidth / 2);
-            
             slider.style.setProperty('--value', `${percent * 100}%`);
             distanceDisplay.style.left = `${offset}px`;
         }
@@ -224,7 +312,7 @@
         }
 
         allPills.forEach(pill => {
-            pill.addEventListener('click', function() {
+            pill.addEventListener('click', function () {
                 this.classList.toggle('active');
             });
         });
@@ -236,16 +324,24 @@
             });
         }
 
-        function formatearFechaExplorar(isoString) {
-            if (!isoString) return 'Fecha por confirmar';
-            const fecha = new Date(isoString);
-            const diaTexto = fecha.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'short' });
-            const horaTexto = fecha.toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit', hour12: true });
-            return `${diaTexto.charAt(0).toUpperCase() + diaTexto.slice(1)}, ${horaTexto}`;
+        let todosLosEventos = [];
+        let categoriaSeleccionada = 'todos';
+
+        function formatearFechaEvento(fechaIso) {
+            if (!fechaIso) return 'Fecha por confirmar';
+            const fecha = new Date(fechaIso);
+            return fecha.toLocaleDateString('es-MX', {
+                weekday: 'short',
+                day: 'numeric',
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
         }
 
         function renderizarEventos(lista) {
             const container = document.getElementById('eventsScrollContainer');
+            actualizarPinesMapa(lista);
 
             if (!lista || lista.length === 0) {
                 container.innerHTML = `<p style="padding: 16px; color: #777;">No se encontraron eventos con esos filtros.</p>`;
@@ -253,47 +349,46 @@
             }
 
             container.innerHTML = lista.map(ev => {
-                const autor = ev.users?.full_name || 'Anfitrión';
-                const asistentes = Array.isArray(ev.event_attendees) ? ev.event_attendees : [];
+                const organizador = ev.users?.full_name || 'Organizador';
+                const asistentes = ev.event_attendees || [];
                 const totalAsistentes = asistentes.length;
 
-                const avataresHTML = asistentes.slice(0, 3).map(a => {
-                    const avatar = a.users?.avatar_url;
-                    return avatar
-                        ? `<img src="${avatar}" alt="${a.users?.full_name || ''}" class="avatar-placeholder" style="object-fit: cover;">`
+                const avataresHtml = asistentes.slice(0, 3).map(a => {
+                    const url = a.users?.avatar_url;
+                    return url
+                        ? `<img src="${url}" alt="Asistente" style="width:24px; height:24px; border-radius:50%; object-fit:cover; border:2px solid #fff; margin-left:-6px;">`
                         : `<div class="avatar-placeholder"></div>`;
                 }).join('');
 
-                const imagenHTML = ev.cover_image_url
-                    ? `<img src="${ev.cover_image_url}" alt="${ev.title}" class="card-img-placeholder" style="object-fit: cover; width: 100%; display: block;">`
-                    : `<div class="card-img-placeholder">${ev.category || 'Evento'}</div>`;
-
                 return `
                     <div class="event-card">
-                        ${imagenHTML}
+                        ${ev.cover_image_url
+                            ? `<img src="${ev.cover_image_url}" alt="${ev.title}" style="width:100%; height:130px; object-fit:cover; border-radius:14px 14px 0 0;">`
+                            : `<div class="card-img-placeholder">[Sin imagen]</div>`
+                        }
                         <div class="card-content">
                             <h3 class="card-title">${ev.title}</h3>
-                            <p class="card-author">Por ${autor}</p>
+                            <p class="card-author">Por ${organizador}</p>
                             
                             <div class="card-details-row">
                                 <i class="fa-regular fa-calendar"></i>
-                                <span>${formatearFechaExplorar(ev.starts_at)}</span>
+                                <span>${formatearFechaEvento(ev.starts_at)}</span>
                             </div>
                             <div class="card-details-row">
                                 <i class="fa-solid fa-location-dot"></i>
-                                <span>${ev.location_name}</span>
+                                <span>${ev.location_name || 'Guadalajara'}</span>
                             </div>
 
                             <div class="card-footer">
                                 <div class="attendees">
                                     <div class="avatar-group">
-                                        ${avataresHTML || '<div class="avatar-placeholder"></div>'}
+                                        ${avataresHtml || '<div class="avatar-placeholder"></div>'}
                                     </div>
                                     <span class="attendees-count">+${totalAsistentes} asistirán</span>
                                 </div>
-                                <a href="../filtros/detalleEventos.html?id=${ev.id}" class="btn-details" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                <button class="btn-details" onclick="window.location.href='../filtros/detalleEventos.html?id=${ev.id}'">
                                     Ver detalles
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -302,22 +397,17 @@
         }
 
         function filtrarYMostrar() {
-            const textoBusqueda = (searchInput.value || '').trim().toLowerCase();
-
-            // Categorías activas dentro del modal de filtros
+            const textoBusqueda = (searchInput?.value || '').trim().toLowerCase();
             const categoriasModal = Array.from(document.querySelectorAll('#categoryGroup .pill-btn.active'))
                 .map(btn => btn.dataset.value.toLowerCase());
 
             const filtrados = todosLosEventos.filter(ev => {
-                // 1. Filtro por chip superior
-                const coincideChip = categoriaSeleccionada === 'Todos' ||
-                    (ev.category && ev.category.toLowerCase() === categoriaSeleccionada.toLowerCase());
+                const coincideChip = categoriaSeleccionada === 'todos' ||
+                    (ev.category && ev.category.toLowerCase().includes(categoriaSeleccionada));
 
-                // 2. Filtro por píldoras de categoría en el modal (si hay alguna seleccionada)
                 const coincideModalCat = categoriasModal.length === 0 ||
                     (ev.category && categoriasModal.includes(ev.category.toLowerCase()));
 
-                // 3. Filtro por texto en título, ubicación o categoría
                 const coincideTexto = !textoBusqueda ||
                     (ev.title && ev.title.toLowerCase().includes(textoBusqueda)) ||
                     (ev.location_name && ev.location_name.toLowerCase().includes(textoBusqueda)) ||
@@ -329,7 +419,6 @@
             renderizarEventos(filtrados);
         }
 
-        // Eventos en chips de categorías horizontales
         document.querySelectorAll('#categoriesScroll .category-chip').forEach(chip => {
             chip.addEventListener('click', () => {
                 document.querySelectorAll('#categoriesScroll .category-chip').forEach(c => c.classList.remove('active'));
@@ -339,18 +428,17 @@
             });
         });
 
-        // Buscador en tiempo real
         if (searchInput) {
             searchInput.addEventListener('input', filtrarYMostrar);
         }
 
-        // Botones del modal de filtros
         if (applyBtn) {
             applyBtn.addEventListener('click', () => {
                 filtrarYMostrar();
                 closeSheet();
             });
         }
+
         if (showResultsBtn) {
             showResultsBtn.addEventListener('click', () => {
                 filtrarYMostrar();
@@ -358,11 +446,11 @@
             });
         }
 
-        // Carga inicial desde Supabase
         document.addEventListener('DOMContentLoaded', async () => {
             try {
                 todosLosEventos = await obtenerEventosExplorarAPI();
                 renderizarEventos(todosLosEventos);
+                setTimeout(() => mapa.invalidateSize(), 200);
             } catch (error) {
                 console.error('Error al cargar eventos:', error);
                 document.getElementById('eventsScrollContainer').innerHTML =

@@ -19,12 +19,20 @@
 
         <!-- Textos de Bienvenida -->
         <div class="welcome-section">
-            <h2>Bienvenido</h2>
-            <p>Inicia sesión para ver que<br>aventuras nos deparan hoy</p>
+            <h2 id="formTitle">Bienvenido</h2>
+            <p id="formSubtitle">Inicia sesión para ver que<br>aventuras nos deparan hoy</p>
         </div>
 
         <!-- Formulario -->
         <form class="login-form" id="loginForm">
+            <!-- Campo extra solo visible en modo Crear Cuenta -->
+            <div class="input-group" id="nameGroup" style="display: none;">
+                <label for="fullName">Nombre Completo</label>
+                <div class="input-wrapper">
+                    <input type="text" id="fullName" placeholder="Ej. Ana García">
+                </div>
+            </div>
+
             <div class="input-group">
                 <label for="email">Correo Electrónico</label>
                 <div class="input-wrapper">
@@ -36,23 +44,22 @@
                 <label for="password">Contraseña</label>
                 <div class="input-wrapper">
                     <input type="password" id="password" placeholder="Ingresa tu Contraseña" style="padding-right: 48px;">
-                    <!-- Placeholder de ícono generado con CSS -->
                     <div class="icon-placeholder" id="togglePassword" style="cursor: pointer;"></div>
                 </div>
             </div>
 
-            <div class="forgot-password">
+            <div class="forgot-password" id="forgotWrapper">
                 <a href="#">Contraseña olvidada?</a>
             </div>
 
-            <!-- Mensaje de error (solo aparece si fallan los datos) -->
+            <!-- Mensaje de error -->
             <p id="error-message" style="color: #D95D39; font-size: 14px; text-align: center; margin-bottom: 10px; display: none;"></p>
 
             <button type="button" class="login-btn" id="loginBtn">Iniciar Sesión</button>
         </form>
 
         <div class="signup-prompt">
-            Nuevo en VToConnect? <a href="#">Crear cuenta</a>
+            <span id="promptText">Nuevo en VToConnect?</span> <a href="#" id="toggleModeLink">Crear cuenta</a>
         </div>
 
         <!-- Footer -->
@@ -64,28 +71,66 @@
 
     </div>
 
-    <!-- Cargar api.js PRIMERO -->
     <script src="../../supabase/api.js"></script>
 
     <script>
         const loginBtn = document.getElementById('loginBtn');
+        const fullNameInput = document.getElementById('fullName');
+        const nameGroup = document.getElementById('nameGroup');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
         const errorMsg = document.getElementById('error-message');
         const togglePassword = document.getElementById('togglePassword');
+        const toggleModeLink = document.getElementById('toggleModeLink');
+        const formTitle = document.getElementById('formTitle');
+        const formSubtitle = document.getElementById('formSubtitle');
+        const forgotWrapper = document.getElementById('forgotWrapper');
+        const promptText = document.getElementById('promptText');
 
-        // Mostrar/ocultar contraseña al tocar el ícono del ojo
+        let modoRegistro = false;
+
+        // Alternar entre Iniciar Sesión y Crear Cuenta
+        toggleModeLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            modoRegistro = !modoRegistro;
+            errorMsg.style.display = 'none';
+
+            if (modoRegistro) {
+                formTitle.textContent = 'Crear Cuenta';
+                formSubtitle.innerHTML = 'Únete a la comunidad y<br>descubre nuevos eventos';
+                nameGroup.style.display = 'block';
+                forgotWrapper.style.display = 'none';
+                loginBtn.textContent = 'Registrarme';
+                promptText.textContent = '¿Ya tienes cuenta?';
+                toggleModeLink.textContent = 'Iniciar sesión';
+            } else {
+                formTitle.textContent = 'Bienvenido';
+                formSubtitle.innerHTML = 'Inicia sesión para ver que<br>aventuras nos deparan hoy';
+                nameGroup.style.display = 'none';
+                forgotWrapper.style.display = 'block';
+                loginBtn.textContent = 'Iniciar Sesión';
+                promptText.textContent = 'Nuevo en VToConnect?';
+                toggleModeLink.textContent = 'Crear cuenta';
+            }
+        });
+
+        // Mostrar/ocultar contraseña
         togglePassword.addEventListener('click', () => {
             const esPassword = passwordInput.type === 'password';
             passwordInput.type = esPassword ? 'text' : 'password';
         });
 
-        async function iniciarSesion() {
+        async function procesarFormulario() {
+            const fullName = fullNameInput.value.trim();
             const email = emailInput.value.trim();
             const password = passwordInput.value;
 
             errorMsg.style.display = 'none';
 
+            if (modoRegistro && !fullName) {
+                mostrarError('Por favor ingresa tu nombre completo.');
+                return;
+            }
             if (!email || !password) {
                 mostrarError('Por favor ingresa tu correo y contraseña.');
                 return;
@@ -93,22 +138,20 @@
 
             try {
                 loginBtn.disabled = true;
-                loginBtn.textContent = 'Verificando...';
+                loginBtn.textContent = modoRegistro ? 'Creando cuenta...' : 'Verificando...';
 
-                // Llamada directa a Supabase mediante src/supabase/api.js
-                const usuario = await iniciarSesionAPI(email, password);
+                const usuario = modoRegistro
+                    ? await registrarUsuarioAPI(fullName, email, password)
+                    : await iniciarSesionAPI(email, password);
 
-                // Guarda los datos del usuario en el navegador para usarlos en Perfil y Eventos
                 localStorage.setItem('usuario', JSON.stringify(usuario));
-
-                // Redirige a la vista de Explorar
                 window.location.href = '../explorar/menuExplorar.html';
 
             } catch (error) {
-                mostrarError(error.message || 'Correo o contraseña incorrectos.');
+                mostrarError(error.message || 'Ocurrió un error al procesar tus datos.');
             } finally {
                 loginBtn.disabled = false;
-                loginBtn.textContent = 'Iniciar Sesión';
+                loginBtn.textContent = modoRegistro ? 'Registrarme' : 'Iniciar Sesión';
             }
         }
 
@@ -117,10 +160,9 @@
             errorMsg.style.display = 'block';
         }
 
-        // Ejecutar al hacer clic en el botón o presionar Enter
-        loginBtn.addEventListener('click', iniciarSesion);
+        loginBtn.addEventListener('click', procesarFormulario);
         passwordInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') iniciarSesion();
+            if (e.key === 'Enter') procesarFormulario();
         });
     </script>
 

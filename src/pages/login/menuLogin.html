@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VToConnect-Web --  Welcome</title>
+    <title>VToConnect-Web -- Welcome</title>
     <link rel="stylesheet" href="../../styles/global.css">
     <link rel="stylesheet" href="../../styles/login.css">
 </head>
@@ -64,17 +64,17 @@
 
     </div>
 
-    <script>
-        // Si trabajas solo en tu PC sin túnel, puedes usar 'http://localhost:3000/api'
-        const API_URL = 'https://kffv9qcs-3000.use.devtunnels.ms/api';
+    <!-- Cargar api.js PRIMERO -->
+    <script src="../../supabase/api.js"></script>
 
+    <script>
         const loginBtn = document.getElementById('loginBtn');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
         const errorMsg = document.getElementById('error-message');
         const togglePassword = document.getElementById('togglePassword');
 
-        // Extra: Permite mostrar/ocultar la contraseña al tocar el ícono del ojo
+        // Mostrar/ocultar contraseña al tocar el ícono del ojo
         togglePassword.addEventListener('click', () => {
             const esPassword = passwordInput.type === 'password';
             passwordInput.type = esPassword ? 'text' : 'password';
@@ -95,27 +95,17 @@
                 loginBtn.disabled = true;
                 loginBtn.textContent = 'Verificando...';
 
-                const response = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    mostrarError(data.error || 'Correo o contraseña incorrectos.');
-                    return;
-                }
+                // Llamada directa a Supabase mediante src/supabase/api.js
+                const usuario = await iniciarSesionAPI(email, password);
 
                 // Guarda los datos del usuario en el navegador para usarlos en Perfil y Eventos
-                localStorage.setItem('usuario', JSON.stringify(data.user));
+                localStorage.setItem('usuario', JSON.stringify(usuario));
 
-                // Cambia 'explorar.html' por el nombre exacto de tu siguiente archivo HTML
-                window.location.href = 'explorar.html';
+                // Redirige a la vista de Explorar
+                window.location.href = '../explorar/menuExplorar.html';
 
             } catch (error) {
-                mostrarError('No se pudo conectar con el servidor. Verifica que node server.js esté activo.');
+                mostrarError(error.message || 'Correo o contraseña incorrectos.');
             } finally {
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Iniciar Sesión';

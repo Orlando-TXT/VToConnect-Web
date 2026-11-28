@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VToConnect-Web</title>
+    <title>VToConnect-Web - Chat del Evento</title>
     <!-- Font Awesome para los iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../../styles/global.css">
@@ -16,56 +16,31 @@
         <!-- Cabecera del Chat -->
         <header class="chat-header">
             <div class="header-left">
-                <button class="back-btn"><i class="fa-solid fa-chevron-left"></i></button>
-                <div class="group-pic-placeholder"></div>
-                <div class="group-info">
-                    <span class="group-title">Yoga al Aire Libre</span>
-                    <span class="group-members">4 participantes</span>
+                <button type="button" class="back-btn" id="btnBackChat"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="group-pic-placeholder" id="groupPicContainer"></div>
+                <div class="group-info" id="groupInfoClick" style="cursor:pointer;">
+                    <span class="group-title" id="groupTitle">Cargando chat...</span>
+                    <span class="group-members" id="groupMembers">...</span>
                 </div>
             </div>
-            <button class="options-btn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+            <button type="button" class="options-btn" id="btnEventDetail"><i class="fa-solid fa-circle-info"></i></button>
         </header>
 
         <!-- Área de Mensajes -->
         <main class="chat-messages" id="chat-box">
-            
-            <div class="message-row message-received">
-                <div class="user-pic-placeholder"></div>
-                <div class="message-content">
-                    <span class="sender-name">Valeria M.</span>
-                    <div class="bubble">¡Hola a todos! ¿Saben si es necesario llevar nuestro propio tapete mañana?</div>
-                    <span class="time">09:15 AM</span>
-                </div>
-            </div>
-
-            <div class="message-row message-received">
-                <div class="user-pic-placeholder"></div>
-                <div class="message-content">
-                    <span class="sender-name">Carlos R.</span>
-                    <div class="bubble">Hola Valeria, sí, el instructor mencionó que cada quien debe llevar el suyo.</div>
-                    <span class="time">09:20 AM</span>
-                </div>
-            </div>
-
-            <div class="message-row message-sent">
-                <div class="message-content">
-                    <div class="bubble">Perfecto, gracias por avisar. ¡Nos vemos en el parque!</div>
-                    <span class="time">09:22 AM</span>
-                </div>
-            </div>
-
+            <p style="text-align:center; color:#777; margin-top:20px;">Cargando conversación...</p>
         </main>
 
         <!-- Barra de Entrada -->
         <footer class="chat-input-area">
-            <button class="icon-btn"><i class="fa-solid fa-paperclip"></i></button>
+            <button type="button" class="icon-btn"><i class="fa-solid fa-paperclip"></i></button>
             <div class="input-wrapper">
                 <input type="text" class="chat-input" placeholder="Escribe un mensaje..." id="msg-input">
             </div>
-            <button class="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            <button type="button" class="send-btn" id="btnSendMsg"><i class="fa-solid fa-paper-plane"></i></button>
         </footer>
 
-        <!-- Barra de navegación inferior (TU HTML) -->
+        <!-- Barra de navegación inferior -->
         <nav class="bottom-nav">
             <a href="../../pages/explorar/menuExplorar.html" class="nav-item">
                 <i class="fa-regular fa-compass"></i>
@@ -79,7 +54,6 @@
                 <i class="fa-solid fa-circle-plus"></i>
                 <span>Crear</span>
             </a>
-            <!-- La clase "active" se movió a Mensajes -->
             <a href="../../pages/chat/menuChat.html" class="nav-item active">
                 <i class="fa-regular fa-comment-dots"></i>
                 <span>Mensajes</span>
@@ -91,45 +65,200 @@
         </nav>
     </div>
 
-    <!-- Script sencillo para simular el envío de mensajes -->
+    <script src="../../supabase/api.js"></script>
     <script>
-        function sendMessage() {
-            const inputField = document.getElementById('msg-input');
+        let eventoActual = null;
+        let usuarioActual = null;
+        let usarSupabaseMensajes = false;
+
+        function formatearHoraChat(isoString) {
+            const fecha = isoString ? new Date(isoString) : new Date();
+            return fecha.toLocaleTimeString('es-MX', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        function escaparHTML(texto) {
+            const div = document.createElement('div');
+            div.textContent = texto;
+            return div.innerHTML;
+        }
+
+        function renderizarMensajes(listaMensajes) {
             const chatBox = document.getElementById('chat-box');
-            const messageText = inputField.value.trim();
 
-            if (messageText !== "") {
-                const now = new Date();
-                let hours = now.getHours();
-                let minutes = now.getMinutes();
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12;
-                hours = hours ? hours : 12; 
-                minutes = minutes < 10 ? '0' + minutes : minutes;
-                const timeString = hours + ':' + minutes + ' ' + ampm;
-
-                const messageHTML = `
-                    <div class="message-row message-sent" style="animation: fadeIn 0.3s ease;">
-                        <div class="message-content">
-                            <div class="bubble">${messageText}</div>
-                            <span class="time">${timeString}</span>
-                        </div>
+            if (!listaMensajes || listaMensajes.length === 0) {
+                chatBox.innerHTML = `
+                    <div style="text-align:center; color:#888; padding: 30px 16px; font-size: 14px;">
+                        Aún no hay mensajes en este grupo.<br>¡Sé el primero en saludar!
                     </div>
                 `;
+                return;
+            }
 
-                chatBox.insertAdjacentHTML('beforeend', messageHTML);
-                inputField.value = "";
-                chatBox.scrollTop = chatBox.scrollHeight;
+            chatBox.innerHTML = listaMensajes.map(m => {
+                const esMio = Number(m.sender_id) === Number(usuarioActual.id);
+                const hora = formatearHoraChat(m.created_at);
+                const textoSeguro = escaparHTML(m.content);
+
+                if (esMio) {
+                    return `
+                        <div class="message-row message-sent">
+                            <div class="message-content">
+                                <div class="bubble">${textoSeguro}</div>
+                                <span class="time">${hora}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const nombreRemitente = m.users?.full_name || m.sender_name || 'Participante';
+                    const avatarRemitente = m.users?.avatar_url || m.sender_avatar;
+                    const avatarHTML = avatarRemitente
+                        ? `<img src="${avatarRemitente}" alt="${nombreRemitente}" class="user-pic-placeholder" style="object-fit:cover;">`
+                        : `<div class="user-pic-placeholder"></div>`;
+
+                    return `
+                        <div class="message-row message-received">
+                            ${avatarHTML}
+                            <div class="message-content">
+                                <span class="sender-name">${escaparHTML(nombreRemitente)}</span>
+                                <div class="bubble">${textoSeguro}</div>
+                                <span class="time">${hora}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function obtenerMensajesLocales(eventId) {
+            const clave = `chat_evento_${eventId}`;
+            return JSON.parse(localStorage.getItem(clave) || '[]');
+        }
+
+        function guardarMensajeLocal(eventId, mensajeObj) {
+            const clave = `chat_evento_${eventId}`;
+            const actuales = obtenerMensajesLocales(eventId);
+            actuales.push(mensajeObj);
+            localStorage.setItem(clave, JSON.stringify(actuales));
+            return actuales;
+        }
+
+        async function sendMessage() {
+            const inputField = document.getElementById('msg-input');
+            const messageText = inputField.value.trim();
+
+            if (!messageText || !eventoActual || !usuarioActual) return;
+
+            inputField.value = '';
+
+            if (usarSupabaseMensajes) {
+                try {
+                    await enviarMensajeChatAPI(eventoActual.id, usuarioActual.id, messageText);
+                    const datos = await obtenerDatosChatEventoAPI(eventoActual.id, usuarioActual.id);
+                    if (datos && Array.isArray(datos.mensajes)) {
+                        renderizarMensajes(datos.mensajes);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('No se pudo enviar el mensaje.');
+                }
+            } else {
+                const nuevos = guardarMensajeLocal(eventoActual.id, {
+                    sender_id: usuarioActual.id,
+                    sender_name: usuarioActual.full_name,
+                    sender_avatar: usuarioActual.avatar_url,
+                    content: messageText,
+                    created_at: new Date().toISOString()
+                });
+                renderizarMensajes(nuevos);
             }
         }
 
-        document.getElementById('msg-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                sendMessage();
+        document.addEventListener('DOMContentLoaded', async () => {
+            usuarioActual = JSON.parse(localStorage.getItem('usuario'));
+            if (!usuarioActual) {
+                window.location.href = '../login/menuLogin.html';
+                return;
             }
+
+            // Botón regresar
+            document.getElementById('btnBackChat').addEventListener('click', () => {
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    window.location.href = '../mis-eventos/misEventos.html';
+                }
+            });
+
+            const params = new URLSearchParams(window.location.search);
+            const eventIdParam = params.get('eventId');
+
+            try {
+                const resultado = await obtenerDatosChatEventoAPI(eventIdParam, usuarioActual.id);
+
+                if (!resultado || !resultado.evento) {
+                    document.getElementById('groupTitle').textContent = 'Sin chats activos';
+                    document.getElementById('groupMembers').textContent = 'Únete a un evento primero';
+                    document.getElementById('chat-box').innerHTML = `
+                        <div style="text-align:center; color:#777; padding: 40px 20px;">
+                            Aún no perteneces a ningún grupo.<br><br>
+                            <a href="../explorar/menuExplorar.html" style="color:#D95D39; font-weight:600; text-decoration:none;">Explorar eventos</a>
+                        </div>
+                    `;
+                    document.getElementById('msg-input').disabled = true;
+                    return;
+                }
+
+                eventoActual = resultado.evento;
+
+                // Pintar cabecera del evento
+                document.getElementById('groupTitle').textContent = eventoActual.title;
+                const totalAsistentes = (Array.isArray(eventoActual.event_attendees) ? eventoActual.event_attendees.length : 0) + 1;
+                document.getElementById('groupMembers').textContent = `${totalAsistentes} participantes`;
+
+                if (eventoActual.cover_image_url) {
+                    const picDiv = document.getElementById('groupPicContainer');
+                    picDiv.innerHTML = `<img src="${eventoActual.cover_image_url}" alt="${eventoActual.title}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+                }
+
+                // Clic en la cabecera o botón info abre el detalle del evento
+                const irADetalle = () => {
+                    window.location.href = `../filtros/detalleEventos.html?id=${eventoActual.id}`;
+                };
+                document.getElementById('groupInfoClick').addEventListener('click', irADetalle);
+                document.getElementById('btnEventDetail').addEventListener('click', irADetalle);
+
+                // Bloquear input si el chat está cerrado
+                if (!eventoActual.is_chat_open) {
+                    const inputEl = document.getElementById('msg-input');
+                    inputEl.disabled = true;
+                    inputEl.placeholder = 'El chat de este evento está cerrado';
+                }
+
+                // Cargar mensajes desde Supabase o fallback local
+                if (Array.isArray(resultado.mensajes)) {
+                    usarSupabaseMensajes = true;
+                    renderizarMensajes(resultado.mensajes);
+                } else {
+                    usarSupabaseMensajes = false;
+                    renderizarMensajes(obtenerMensajesLocales(eventoActual.id));
+                }
+
+            } catch (error) {
+                console.error('Error al cargar el chat:', error);
+                document.getElementById('groupTitle').textContent = 'Error al cargar chat';
+            }
+
+            document.getElementById('btnSendMsg').addEventListener('click', sendMessage);
+            document.getElementById('msg-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
         });
     </script>
 </body>
 </html>
-
-

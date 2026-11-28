@@ -16,228 +16,243 @@
 </head>
 
 <body>
+    <main class="explorar-map-wrapper">
 
-    <div class="app-container explorar-page">
+        <!-- MAPA -->
+        <div id="map" class="google-map-background">
+            <div class="map-view-container">
+                <div id="map" class="google-map"></div>
+            </div>
+        </div>
 
-        <!-- =========================================
-             TOOLBAR: Buscador + Botón de Filtros
-             ========================================= -->
-        <div class="explorar-toolbar">
+        <section class="drag-handle-container" id="dragContainer">
+            <!--BOTTOM SHEET-->
+            <div class="drag-handle-bar" id="dragHandle" title="Desliza o haz clic para ver el mapa">
+                <div class="handle-pill"></div>
+            </div>
 
-            <!-- Contenedor del Buscador y Menú Desplegable -->
-            <div class="search-container" id="searchContainer">
-                <div class="search-bar">
-                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <input type="text" id="searchInput" class="search-input"
-                        placeholder="Buscar eventos, clases, talleres..." autocomplete="off" />
-                    <button type="button" id="clearSearchBtn" class="clear-btn hidden" aria-label="Limpiar búsqueda">
-                        &times;
+            <!-- Contenido interno del panel de Explorar -->
+            <div class="drag-content">
+
+                <header class="explorar-header">
+                    <h1>Explorar Eventos y Clases</h1>
+                    <p>Encuentra actividades cerca de ti</p>
+                </header>
+
+                <!--TOOLBAR: Buscador + Botón de Filtros-->
+                <div class="explorar-toolbar">
+
+                    <!-- Contenedor del Buscador y Menú Desplegable -->
+                    <div class="search-container" id="searchContainer">
+                        <div class="search-bar">
+                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" id="searchInput" class="search-input"
+                                placeholder="Buscar eventos, clases, talleres..." autocomplete="off" />
+                            <button type="button" id="clearSearchBtn" class="clear-btn hidden"
+                                aria-label="Limpiar búsqueda">
+                                &times;
+                            </button>
+                        </div>
+
+                        <!-- Menú desplegable dinámico -->
+                        <div class="search-dropdown hidden" id="searchDropdown">
+                            <div class="dropdown-section">
+                                <span class="dropdown-title">Categorías populares</span>
+                                <ul class="dropdown-list" id="dropdownCategories">
+                                    <!-- Se llena dinámicamente desde JS / Supabase -->
+                                </ul>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-section">
+                                <span class="dropdown-title">Sugerencias</span>
+                                <ul class="dropdown-list" id="dropdownResults">
+                                    <!-- Resultados filtrados en tiempo real -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón para abrir el panel de Filtros -->
+                    <button type="button" class="filter-trigger-btn" id="openFiltersBtn" aria-label="Abrir filtros">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="4" y1="21" x2="4" y2="14"></line>
+                            <line x1="4" y1="10" x2="4" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12" y2="3"></line>
+                            <line x1="20" y1="21" x2="20" y2="16"></line>
+                            <line x1="20" y1="12" x2="20" y2="3"></line>
+                            <line x1="1" y1="14" x2="7" y2="14"></line>
+                            <line x1="9" y1="8" x2="15" y2="8"></line>
+                            <line x1="17" y1="16" x2="23" y2="16"></line>
+                        </svg>
                     </button>
                 </div>
 
-                <!-- Menú desplegable dinámico -->
-                <div class="search-dropdown hidden" id="searchDropdown">
-                    <div class="dropdown-section">
-                        <span class="dropdown-title">Categorías populares</span>
-                        <ul class="dropdown-list" id="dropdownCategories">
-                            <!-- Se llena dinámicamente desde JS / Supabase -->
-                        </ul>
+                <!-- Lista / Grid de Tarjetas de Eventos -->
+                <div class="events-grid" id="eventsGrid">
+                    <!-- Aquí se renderizan las tarjetas de eventos desde Supabase -->
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <div class="sheet-content">
+        <!-- Filtros / Categorías horizontales -->
+        <div class="categories-scroll">
+            <div class="category-chip active">Todos</div>
+            <div class="category-chip">Yoga</div>
+            <div class="category-chip">Baile</div>
+            <div class="category-chip">Senderismo</div>
+            <div class="category-chip">Tours</div>
+        </div>
+
+        <!-- Título de sección -->
+        <div class="section-header">
+            <h2 class="section-title">Cerca de ti este fin de semana</h2>
+        </div>
+
+        <!-- Scroll horizontal de eventos -->
+        <div class="events-scroll">
+
+            <!-- Tarjeta de Evento 1 -->
+            <div class="event-card">
+                <div class="card-img-placeholder">[Imagen Yoga]</div>
+                <div class="card-content">
+                    <h3 class="card-title">Clase de Yoga para Principiantes</h3>
+                    <p class="card-author">Por Sofía M.</p>
+
+                    <div class="card-details-row">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span>Sábado, 10:00 AM</span>
                     </div>
-                    <div class="dropdown-divider"></div>
-                    <div class="dropdown-section">
-                        <span class="dropdown-title">Sugerencias</span>
-                        <ul class="dropdown-list" id="dropdownResults">
-                            <!-- Resultados filtrados en tiempo real -->
-                        </ul>
+                    <div class="card-details-row">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Parque Metropolitano</span>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="attendees">
+                            <div class="avatar-group">
+                                <div class="avatar-placeholder"></div>
+                                <div class="avatar-placeholder"></div>
+                                <div class="avatar-placeholder"></div>
+                            </div>
+                            <span class="attendees-count">+12 asistirán</span>
+                        </div>
+                        <a href="../filtros/detalleEventos.html" class="btn-details">Ver detalles</a>
                     </div>
                 </div>
             </div>
 
-            <!-- Botón para abrir el panel de Filtros -->
-            <button type="button" class="filter-trigger-btn" id="openFiltersBtn" aria-label="Abrir filtros">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="4" y1="21" x2="4" y2="14"></line>
-                    <line x1="4" y1="10" x2="4" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12" y2="3"></line>
-                    <line x1="20" y1="21" x2="20" y2="16"></line>
-                    <line x1="20" y1="12" x2="20" y2="3"></line>
-                    <line x1="1" y1="14" x2="7" y2="14"></line>
-                    <line x1="9" y1="8" x2="15" y2="8"></line>
-                    <line x1="17" y1="16" x2="23" y2="16"></line>
-                </svg>
-            </button>
+            <!-- Tarjeta de Evento 2 -->
+            <div class="event-card">
+                <div class="card-img-placeholder">[Imagen Sprint/Running]</div>
+                <div class="card-content">
+                    <h3 class="card-title">Sprint en grupo &amp; Running</h3>
+                    <p class="card-author">Por Carlos D.</p>
 
-        </div>
+                    <div class="card-details-row">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span>Domingo, 8:00 AM</span>
+                    </div>
+                    <div class="card-details-row">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Bosque Los Colomos</span>
+                    </div>
 
-        <!-- =========================================
-             MAPA
-             ========================================= -->
-        <div class="map-view-container">
-            <div id="map" class="google-map"></div>
-        </div>
-
-        <!-- =========================================
-             BOTTOM SHEET ORIGINAL (eventos cerca de ti)
-             ========================================= -->
-        <div class="bottom-sheet">
-            <div class="drag-handle-container">
-                <div class="drag-handle"></div>
+                    <div class="card-footer">
+                        <div class="attendees">
+                            <div class="avatar-group">
+                                <div class="avatar-placeholder"></div>
+                                <div class="avatar-placeholder"></div>
+                            </div>
+                            <span class="attendees-count">+5 asistirán</span>
+                        </div>
+                        <a href="../filtros/detalleEventos.html" class="btn-details">Ver detalles</a>
+                    </div>
+                </div>
             </div>
 
-            <div class="sheet-content">
-                <!-- Filtros / Categorías horizontales -->
-                <div class="categories-scroll">
-                    <div class="category-chip active">Todos</div>
-                    <div class="category-chip">Yoga</div>
-                    <div class="category-chip">Baile</div>
-                    <div class="category-chip">Senderismo</div>
-                    <div class="category-chip">Tours</div>
-                </div>
-
-                <!-- Título de sección -->
-                <div class="section-header">
-                    <h2 class="section-title">Cerca de ti este fin de semana</h2>
-                </div>
-
-                <!-- Scroll horizontal de eventos -->
-                <div class="events-scroll">
-
-                    <!-- Tarjeta de Evento 1 -->
-                    <div class="event-card">
-                        <div class="card-img-placeholder">[Imagen Yoga]</div>
-                        <div class="card-content">
-                            <h3 class="card-title">Clase de Yoga para Principiantes</h3>
-                            <p class="card-author">Por Sofía M.</p>
-
-                            <div class="card-details-row">
-                                <i class="fa-regular fa-calendar"></i>
-                                <span>Sábado, 10:00 AM</span>
-                            </div>
-                            <div class="card-details-row">
-                                <i class="fa-solid fa-location-dot"></i>
-                                <span>Parque Metropolitano</span>
-                            </div>
-
-                            <div class="card-footer">
-                                <div class="attendees">
-                                    <div class="avatar-group">
-                                        <div class="avatar-placeholder"></div>
-                                        <div class="avatar-placeholder"></div>
-                                        <div class="avatar-placeholder"></div>
-                                    </div>
-                                    <span class="attendees-count">+12 asistirán</span>
-                                </div>
-                                <a href="../filtros/detalleEventos.html" class="btn-details">Ver detalles</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tarjeta de Evento 2 -->
-                    <div class="event-card">
-                        <div class="card-img-placeholder">[Imagen Sprint/Running]</div>
-                        <div class="card-content">
-                            <h3 class="card-title">Sprint en grupo &amp; Running</h3>
-                            <p class="card-author">Por Carlos D.</p>
-
-                            <div class="card-details-row">
-                                <i class="fa-regular fa-calendar"></i>
-                                <span>Domingo, 8:00 AM</span>
-                            </div>
-                            <div class="card-details-row">
-                                <i class="fa-solid fa-location-dot"></i>
-                                <span>Bosque Los Colomos</span>
-                            </div>
-
-                            <div class="card-footer">
-                                <div class="attendees">
-                                    <div class="avatar-group">
-                                        <div class="avatar-placeholder"></div>
-                                        <div class="avatar-placeholder"></div>
-                                    </div>
-                                    <span class="attendees-count">+5 asistirán</span>
-                                </div>
-                                <a href="../filtros/detalleEventos.html" class="btn-details">Ver detalles</a>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
         </div>
+    </div>
 
-        <!-- =========================================
-             PANEL DE FILTROS (integrado desde filtrosEventos.html)
-             ========================================= -->
-        <div class="filters-overlay hidden" id="filtersOverlay">
-            <div class="filters-container">
 
-                <div class="filters-header">
-                    <h2>Filtrar Búsqueda</h2>
-                    <button type="button" class="close-filters-btn" id="closeFiltersBtn" aria-label="Cerrar filtros">
-                        &times;
-                    </button>
+    <!-- =========================================
+        PANEL DE FILTROS (integrado desde filtrosEventos.html)
+        ========================================= -->
+    <div class="filters-overlay hidden" id="filtersOverlay">
+        <div class="filters-container">
+
+            <div class="filters-header">
+                <h2>Filtrar Búsqueda</h2>
+                <button type="button" class="close-filters-btn" id="closeFiltersBtn" aria-label="Cerrar filtros">
+                    &times;
+                </button>
+            </div>
+
+            <div class="filters-body">
+
+                <!-- Distancia -->
+                <div class="filter-group">
+                    <label for="distanceRange" class="filter-label">
+                        Distancia máxima: <span id="distanceValue">5</span> km
+                    </label>
+                    <input type="range" id="distanceRange" class="filter-slider" min="1" max="20" value="5" step="1" />
+                    <div class="slider-marks">
+                        <span>1 km</span>
+                        <span>10 km</span>
+                        <span>20+ km</span>
+                    </div>
                 </div>
 
-                <div class="filters-body">
+                <hr class="filter-divider" />
 
-                    <!-- Distancia -->
-                    <div class="filter-group">
-                        <label for="distanceRange" class="filter-label">
-                            Distancia máxima: <span id="distanceValue">5</span> km
-                        </label>
-                        <input type="range" id="distanceRange" class="filter-slider" min="1" max="20" value="5"
-                            step="1" />
-                        <div class="slider-marks">
-                            <span>1 km</span>
-                            <span>10 km</span>
-                            <span>20+ km</span>
-                        </div>
+                <!-- Categorías -->
+                <div class="filter-group">
+                    <label class="filter-label">Categorías</label>
+                    <div class="filter-chips-container" id="filterCategoryChips">
+                        <button type="button" class="filter-chip active" data-category="todos">Todos</button>
+                        <button type="button" class="filter-chip" data-category="clases">Clases</button>
+                        <button type="button" class="filter-chip" data-category="yoga">Yoga y Bienestar</button>
+                        <button type="button" class="filter-chip" data-category="tech">Conferencias Tech</button>
+                        <button type="button" class="filter-chip" data-category="sprint">Running / Sprint</button>
                     </div>
-
-                    <hr class="filter-divider" />
-
-                    <!-- Categorías -->
-                    <div class="filter-group">
-                        <label class="filter-label">Categorías</label>
-                        <div class="filter-chips-container" id="filterCategoryChips">
-                            <button type="button" class="filter-chip active" data-category="todos">Todos</button>
-                            <button type="button" class="filter-chip" data-category="clases">Clases</button>
-                            <button type="button" class="filter-chip" data-category="yoga">Yoga y Bienestar</button>
-                            <button type="button" class="filter-chip" data-category="tech">Conferencias Tech</button>
-                            <button type="button" class="filter-chip" data-category="sprint">Running / Sprint</button>
-                        </div>
-                    </div>
-
-                    <hr class="filter-divider" />
-
-                    <!-- Ordenamiento -->
-                    <div class="filter-group">
-                        <label for="sortBySelect" class="filter-label">Ordenar eventos por</label>
-                        <select id="sortBySelect" class="filter-select">
-                            <option value="recientes">Más recientes</option>
-                            <option value="proximos" selected>Próximos a iniciar</option>
-                            <option value="cercanos">Más cerca de mi ubicación</option>
-                            <option value="popularidad">Mayor asistencia</option>
-                        </select>
-                    </div>
-
                 </div>
 
-                <div class="filters-footer">
-                    <button type="button" class="btn-secondary" id="resetFiltersBtn">Limpiar</button>
-                    <button type="button" class="btn-primary" id="applyFiltersBtn">Aplicar filtros</button>
+                <hr class="filter-divider" />
+
+                <!-- Ordenamiento -->
+                <div class="filter-group">
+                    <label for="sortBySelect" class="filter-label">Ordenar eventos por</label>
+                    <select id="sortBySelect" class="filter-select">
+                        <option value="recientes">Más recientes</option>
+                        <option value="proximos" selected>Próximos a iniciar</option>
+                        <option value="cercanos">Más cerca de mi ubicación</option>
+                        <option value="popularidad">Mayor asistencia</option>
+                    </select>
                 </div>
 
             </div>
-        </div>
 
-        <!-- =========================================
+            <div class="filters-footer">
+                <button type="button" class="btn-secondary" id="resetFiltersBtn">Limpiar</button>
+                <button type="button" class="btn-primary" id="applyFiltersBtn">Aplicar filtros</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =========================================
              BARRA DE NAVEGACIÓN INFERIOR
              ========================================= -->
+    <div id="navbar-container">
+
         <nav class="bottom-nav">
             <a href="../explorar/menuExplorar.html" class="nav-item active">
                 <i class="fa-regular fa-compass"></i>
@@ -260,12 +275,15 @@
                 <span>Perfil</span>
             </a>
         </nav>
-
     </div>
 
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdwDkB8H2bl8Ozm0b7sqDS2kpvsWH5aQs&libraries=places"
+        async defer></script>
+
     <!-- =========================================
-         SCRIPT DE LÓGICA
-         ========================================= -->
+    SCRIPT DE LÓGICA
+    ========================================= -->
     <script>
         /* ==============================
            FILTROS: abrir / cerrar
